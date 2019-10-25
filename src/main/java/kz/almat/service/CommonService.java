@@ -5,10 +5,14 @@ import java.util.List;
 
 public interface CommonService<E> {
 
-    public List<E> getAll() throws SQLException;
-    public E getById(Long id) throws SQLException;
-    public void create(E entity) throws SQLException;
-    public void update(Long id, E entity) throws SQLException;
-    public void delete(Long id) throws SQLException;
+    List<E> getAll() throws SQLException;
+
+    E getById(Long id) throws SQLException;
+
+    void create(E entity) throws SQLException;
+
+    void update(Long id, E entity) throws SQLException;
+
+    void delete(Long id) throws SQLException;
 
 }

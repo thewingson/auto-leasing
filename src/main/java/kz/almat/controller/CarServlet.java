@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -29,8 +30,6 @@ public class CarServlet extends HttpServlet {
         if (method != null) {
             if (method.equals("update")) {
                 updateDo(req, resp);
-            } else if (method.equals("delete")) {
-                delete(req, resp);
             }
         } else {
             create(req, resp);
@@ -49,6 +48,10 @@ public class CarServlet extends HttpServlet {
                 update(req, resp);
             } else if (method.equals("getOne")) {
                 getOne(req, resp);
+            } else if (method.equals("delete")) {
+                delete(req, resp);
+            } else if (method.equals("rent")) {
+                rent(req, resp);
             }
         } else {
             getList(req, resp);
@@ -142,6 +145,22 @@ public class CarServlet extends HttpServlet {
 
         try {
             carServiceImpl.update(id, carToUpdate);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        getList(req, resp);
+
+    }
+
+    protected void rent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        Long id = Long.parseLong(req.getParameter("id"));
+        HttpSession session = req.getSession();
+        String username = (String) session.getAttribute("username");
+
+        try {
+            carServiceImpl.rent(id, username);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -5,7 +5,8 @@
          version="4.0">
 
 
-    <!--  CAR  -->
+                        <!--  SERVLET  -->
+    <!--  car  -->
     <servlet>
         <servlet-name>CarServlet</servlet-name>
         <servlet-class>kz.almat.controller.CarServlet</servlet-class>
@@ -15,7 +16,7 @@
         <url-pattern>/car</url-pattern>
     </servlet-mapping>
 
-    <!--  USER  -->
+    <!--  user  -->
     <servlet>
         <servlet-name>UserServlet</servlet-name>
         <servlet-class>kz.almat.controller.UserServlet</servlet-class>
@@ -25,7 +26,7 @@
         <url-pattern>/user</url-pattern>
     </servlet-mapping>
 
-    <!--  AUTH  -->
+    <!--  auth  -->
     <servlet>
         <servlet-name>AuthServlet</servlet-name>
         <servlet-class>kz.almat.controller.AuthServlet</servlet-class>
@@ -34,6 +35,17 @@
         <servlet-name>AuthServlet</servlet-name>
         <url-pattern>/auth</url-pattern>
     </servlet-mapping>
+
+                        <!--  FILTER  -->
+    <!--  security  -->
+    <filter>
+        <filter-name>SecurityFilter</filter-name>
+        <filter-class>kz.almat.filter.SecurityFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SecurityFilter</filter-name>
+        <servlet-name>UserServlet</servlet-name>
+    </filter-mapping>
 
     <welcome-file-list>
         <welcome-file>car</welcome-file>

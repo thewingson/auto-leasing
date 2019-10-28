@@ -3,6 +3,7 @@ package kz.almat.dao.impl;
 import kz.almat.constant.CommonQueryScripts;
 import kz.almat.dao.CarDao;
 import kz.almat.model.Car;
+import kz.almat.model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +19,12 @@ public class CarDaoImpl implements CarDao {
     private static final String ALL_COLUMNS_CREATE = "(mark,model,registered_number)";
     private static final String ALL_COLUMNS_UPDATE = "mark = ?, model= ?, registered_number =?";
     private static final String STATEMENT_VALUES_CREATE = "(?, ?, ?)";
+
+    private static final String SELECT_JOIN_USER = "select c.id, c.mark, c.model, c.registered_number, u.id as rentor_id, u.username" +
+                                                    " from car c " +
+                                                    " inner join usr u on u.id = c.rentor_id";
+
+    private static final String SELECT_BY_ID_JOIN_USER = SELECT_JOIN_USER + " where c.id = ?";
 
     private static final String RENTOR_UPDATE = "rentor_id =?";
 
@@ -35,7 +42,7 @@ public class CarDaoImpl implements CarDao {
     public List<Car> getList(Connection connection) throws SQLException {
         List<Car> cars = new ArrayList<Car>();
 
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_CARS);
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_JOIN_USER);
         ResultSet rs = preparedStatement.executeQuery();
 
         while (rs.next()) {
@@ -47,7 +54,7 @@ public class CarDaoImpl implements CarDao {
 
     public Car getById(Connection connection, Long id) throws SQLException {
         Car car = null;
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_CAR_BY_ID);
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID_JOIN_USER);
         preparedStatement.setLong(1, id);
         ResultSet rs = preparedStatement.executeQuery();
 
@@ -91,6 +98,7 @@ public class CarDaoImpl implements CarDao {
         String model = null;
         String registeredNumber = null;
         Long rentor_id = null;
+        String username = null;
 
         try {
             carId = rs.getLong("id");
@@ -98,11 +106,12 @@ public class CarDaoImpl implements CarDao {
             model = rs.getString("model");
             registeredNumber = rs.getString("registered_number");
             rentor_id = rs.getLong("rentor_id");
+            username = rs.getString("username");
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return new Car(carId, mark, model, registeredNumber);
+        return new Car(carId, mark, model, registeredNumber, new User(rentor_id,null,null,null,username, null));
     }
 
     public boolean rent(Connection connection, Long carId, Long userId) throws SQLException {

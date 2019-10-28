@@ -1,30 +1,22 @@
-package kz.almat.model;
+package kz.almat.model.dto;
 
-public class Car {
+public class CarDTO {
 
     private Long id;
     private String mark;
     private String model;
     private String registeredNumber;
+    private Long rentor_id;
 
-    private User rentor;
-
-    public Car() {
+    public CarDTO() {
     }
 
-    public Car(Long id, String mark, String model, String registeredNumber) {
+    public CarDTO(Long id, String mark, String model, String registeredNumber, Long rentor_id) {
         this.id = id;
         this.mark = mark;
         this.model = model;
         this.registeredNumber = registeredNumber;
-    }
-
-    public Car(Long id, String mark, String model, String registeredNumber, User user) {
-        this.id = id;
-        this.mark = mark;
-        this.model = model;
-        this.registeredNumber = registeredNumber;
-        this.rentor = user;
+        this.rentor_id = rentor_id;
     }
 
     public Long getId() {
@@ -59,11 +51,11 @@ public class Car {
         this.registeredNumber = registeredNumber;
     }
 
-    public User getRentor() {
-        return rentor;
+    public Long getRentor_id() {
+        return rentor_id;
     }
 
-    public void setRentor(User rentor) {
-        this.rentor = rentor;
+    public void setRentor_id(Long rentor_id) {
+        this.rentor_id = rentor_id;
     }
 }

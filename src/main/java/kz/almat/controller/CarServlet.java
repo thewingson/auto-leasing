@@ -2,6 +2,7 @@ package kz.almat.controller;
 
 
 import kz.almat.model.Car;
+import kz.almat.model.dto.CarDTO;
 import kz.almat.service.impl.CarServiceImpl;
 
 import javax.servlet.RequestDispatcher;
@@ -62,9 +63,9 @@ public class CarServlet extends HttpServlet {
     protected void getOne(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
-        Car car = null;
+        CarDTO car = null;
         try {
-            car = carServiceImpl.getById(id);
+            car = carServiceImpl.getByIdDTO(id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -76,9 +77,9 @@ public class CarServlet extends HttpServlet {
 
     protected void getList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        List<Car> cars = null;
+        List<CarDTO> cars = null;
         try {
-            cars = carServiceImpl.getAll();
+            cars = carServiceImpl.getAllDTO();
         } catch (SQLException e) {
             e.printStackTrace();
         }

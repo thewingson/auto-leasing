@@ -4,6 +4,7 @@ import kz.almat.dao.impl.CarDaoImpl;
 import kz.almat.dao.impl.UserDaoImpl;
 import kz.almat.model.Car;
 import kz.almat.model.User;
+import kz.almat.model.dto.CarDTO;
 import kz.almat.service.CarService;
 import kz.almat.util.ConnectionPool;
 
@@ -45,12 +46,45 @@ public class CarServiceImpl implements CarService {
         return cars;
     }
 
+    public List<CarDTO> getAllDTO() throws SQLException {
+
+        connection = ConnectionPool.getConnection();
+        List<Car> cars = carDaoImpl.getList(connection);
+        connection.close();
+
+//        try {
+//            connection = ConnectionPool.getConnection();
+//            cars = carDaoImpl.getList(connection);
+//        } finally {
+//            if (connection != null) {
+//                connection.close();
+//            }
+//        }
+
+        List<CarDTO> carDTOS = new ArrayList<CarDTO>();
+
+        for (Car c : cars){
+            CarDTO carDTO = new CarDTO(c.getId(), c.getMark(), c.getModel(), c.getRegisteredNumber(), c.getRentor().getId());
+            carDTOS.add(carDTO);
+        }
+
+        return carDTOS;
+    }
+
     public Car getById(Long carId) throws SQLException {
         connection = ConnectionPool.getConnection();
         Car car = carDaoImpl.getById(connection, carId);
         connection.close();
 
         return car;
+    }
+
+    public CarDTO getByIdDTO(Long carId) throws SQLException {
+        connection = ConnectionPool.getConnection();
+        Car car = carDaoImpl.getById(connection, carId);
+        connection.close();
+
+        return new CarDTO(car.getId(), car.getMark(), car.getModel(), car.getRegisteredNumber(), car.getRentor().getId());
     }
 
     public void create(Car car) throws SQLException {

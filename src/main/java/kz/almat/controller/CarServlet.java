@@ -17,6 +17,7 @@ public class CarServlet extends HttpServlet {
 
     private CarServiceImpl carServiceImpl;
 
+    // TODO: missing @Override in every servlet. Having @Override improves readability and avoids compiler warnings
     public void init() {
         carServiceImpl = new CarServiceImpl();
     }

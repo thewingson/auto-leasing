@@ -1,5 +1,6 @@
 package kz.almat.constant;
 
+// TODO: Util classes should be closed for extension, i.e. be final and contain private constructors
 public class CommonQueryScripts {
 
     public static final String INSERT = "INSERT INTO %s" +

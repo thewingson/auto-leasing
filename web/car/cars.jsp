@@ -33,6 +33,7 @@
         </tr>
         </thead>
         <tbody>
+        // TODO: if you make use of JSTL, this code will become a lot simpler and nicer
             <%
                 List<Car> cars = (List) request.getAttribute("cars");
             %>

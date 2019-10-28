@@ -123,7 +123,9 @@ public class UserServlet extends HttpServlet {
         User userToUpdate = null;
         try {
             userToUpdate = userServiceimpl.getById(id);
-        } catch (SQLException e) {
+        }
+        // TODO: this is what I referred to in services. Service layer should be responsible for handling these exceptions
+        catch (SQLException e) {
             e.printStackTrace();
         }
         req.setAttribute("user", userToUpdate);

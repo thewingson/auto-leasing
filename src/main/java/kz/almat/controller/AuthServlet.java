@@ -15,6 +15,7 @@ import java.sql.SQLException;
 
 public class AuthServlet extends HttpServlet {
 
+    // TODO: servlets should not have mutable fields since all threads share servlet instances. So all of the fields should be declared final if they are needed
     private UserServiceimpl userServiceimpl;
     private AuthServiceImpl authServiceImpl;
 
@@ -44,6 +45,7 @@ public class AuthServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
+        // TODO: unnecessary cast to String
         String method = (String) req.getParameter("method");
 
         if (method != null) {
@@ -73,10 +75,11 @@ public class AuthServlet extends HttpServlet {
     }
 
     protected void signOutDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        // TODO: here username and password should be extracted to constants as well. They're repeated too many times.
         HttpSession session = req.getSession();
         String username = (String) session.getAttribute("username");
 
+        // TODO: session.invalidate() is used for this purpose
         if (username != null) {
             session.removeAttribute("username");
             session.removeAttribute("password");
@@ -100,7 +103,10 @@ public class AuthServlet extends HttpServlet {
 
             try {
                 userServiceimpl.create(user);
-            } catch (SQLException e) {
+            }
+            // TODO: printing stacktraces should be replaced by loggers. But anyway this way of exception handling should be moved to services
+            //  as I've written earlier
+            catch (SQLException e) {
                 e.printStackTrace();
             }
 

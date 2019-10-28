@@ -42,6 +42,7 @@
         List<User> users = (List) request.getAttribute("users");
     %>
 
+    // TODO: here again is a really bad example of building JSP pages. Try applying JSTL, it is easy to work with
     <%
         for (User c : users) {
     %>

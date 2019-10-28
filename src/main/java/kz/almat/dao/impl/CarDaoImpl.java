@@ -22,7 +22,7 @@ public class CarDaoImpl implements CarDao {
 
     private static final String SELECT_JOIN_USER = "select c.id, c.mark, c.model, c.registered_number, u.id as rentor_id, u.username" +
                                                     " from car c " +
-                                                    " inner join usr u on u.id = c.rentor_id";
+                                                    " left join usr u on u.id = c.rentor_id";
 
     private static final String SELECT_BY_ID_JOIN_USER = SELECT_JOIN_USER + " where c.id = ?";
 

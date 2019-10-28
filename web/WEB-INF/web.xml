@@ -46,6 +46,10 @@
         <filter-name>SecurityFilter</filter-name>
         <servlet-name>UserServlet</servlet-name>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>SecurityFilter</filter-name>
+        <servlet-name>CarServlet</servlet-name>
+    </filter-mapping>
 
     <welcome-file-list>
         <welcome-file>car</welcome-file>

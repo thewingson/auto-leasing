@@ -7,6 +7,7 @@
 --%>
 <%@ page import="kz.almat.model.dto.CarDTO" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.stream.Stream" %>
 <html>
 <head>
     <title>Cars</title>
@@ -35,18 +36,19 @@
     </thead>
     <tbody style="border: 2px solid black">
     <%
-        List<CarDTO> cars = null;
-        if(request.getAttribute("cars")!= null){
-            cars = (List) request.getAttribute("cars");
-        }
+        List<CarDTO> cars = (List<CarDTO>) request.getAttribute("cars");
+
+        String role = (String) session.getAttribute("role");
+
     %>
 
     <%
-        if(cars != null){
+        if (cars != null) {
             for (CarDTO c : cars) {
     %>
-    <tr >
-        <td style="border: 1px solid black"><a class="button" href="?method=getOne&id=<%=c.getId()%>"><%=c.getId()%></a>
+    <tr>
+        <td style="border: 1px solid black"><a class="button" href="?method=getOne&id=<%=c.getId()%>"><%=c.getId()%>
+        </a>
         </td>
         <td style="border: 1px solid black"><%=c.getMark()%>
         </td>
@@ -57,12 +59,14 @@
         <td style="border: 1px solid black"><%=c.getRentor_id()%>
         </td>
         <td style="border: 1px solid black">
+            <% if (role != null && role.equals("ADMIN")) { %>
             <a class="button" href="?method=update&id=<%=c.getId()%>">Edit</a>
             <a class="button" href="?method=delete&id=<%=c.getId()%>">Delete</a>
+            <% } %>
 
-            <% if(request.getSession().getAttribute("username") != null && c.getRentor_id() == null){ %>
-<%--            //&& c.getRentor() == null--%>
-                <a class="button" href="?method=rent&id=<%=c.getId()%>">Rent</a>
+            <% if (request.getSession().getAttribute("username") != null && c.getRentor_id() == null) { %>
+            <%--            //&& c.getRentor() == null--%>
+            <a class="button" href="?method=rent&id=<%=c.getId()%>">Rent</a>
             <% } %>
         </td>
     </tr>

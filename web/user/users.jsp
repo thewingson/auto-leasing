@@ -27,48 +27,45 @@
 </form>
 
 <h3>Users</h3>
-<table class="table table-bordered">
+<table class="table table-bordered" style="border: 2px solid black">
     <thead>
     <tr>
-        <th>First name</th>
-        <th>Last name</th>
-        <th>Email</th>
-        <th>Username</th>
-        <th>Password</th>
+        <th style="border: 2px solid black">First name</th>
+        <th style="border: 2px solid black">Last name</th>
+        <th style="border: 2px solid black">Email</th>
+        <th style="border: 2px solid black">Username</th>
+        <th style="border: 2px solid black">Password</th>
+        <th style="border: 2px solid black">Action</th>
+
     </tr>
     </thead>
     <tbody>
     <%
-        List<User> users = (List) request.getAttribute("users");
+        List<User> users = null;
+        if(request.getAttribute("users") != null){
+            users = (List) request.getAttribute("users");
+        }
     %>
 
     // TODO: here again is a really bad example of building JSP pages. Try applying JSTL, it is easy to work with
     <%
-        for (User c : users) {
+        if(users != null){
+            for (User u : users) {
     %>
     <tr>
-        <td><%=c.getFirstName()%></td>
-        <td><%=c.getLastName()%></td>
-        <td><%=c.getEmail()%></td>
-        <td><%=c.getUsername()%></td>
-        <td><%=c.getPassword()%></td>
-        <td>
-            <%--                    <a href="update?id=<%=c.getId()%>">Edit</a>--%>
-            <form action = "user" method = "GET">
-                <input type = "hidden" value="update" name="method" />
-                <input type = "hidden" value="<%=c.getId()%>" name="id" />
-                <input type = "submit" value = "Edit" />
-            </form>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <%--                    <a href="car/delete?id=<%=c.getId()%>">Delete</a>--%>
-            <form action = "user" method = "POST">
-                <input type = "hidden" value="delete" name="method" />
-                <input type = "hidden" value="<%=c.getId()%>" name="id" />
-                <input type = "submit" value = "Delete" />
-            </form>
+        <td style="border: 1px solid black"><%=u.getFirstName()%></td>
+        <td style="border: 1px solid black"><%=u.getLastName()%></td>
+        <td style="border: 1px solid black"><%=u.getEmail()%></td>
+        <td style="border: 1px solid black"><%=u.getUsername()%></td>
+        <td style="border: 1px solid black"><%=u.getPassword()%></td>
+        <td style="border: 1px solid black">
+
+            <a class="button" href="?method=update&id=<%=u.getId()%>">Edit</a>
+            <a class="button" href="?method=delete&id=<%=u.getId()%>">Delete</a>
         </td>
     </tr>
     <%
+            }
         }
     %>
     </tbody>

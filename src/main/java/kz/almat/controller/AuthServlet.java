@@ -1,5 +1,6 @@
 package kz.almat.controller;
 
+import kz.almat.model.Role;
 import kz.almat.model.User;
 import kz.almat.service.impl.AuthServiceImpl;
 import kz.almat.service.impl.UserServiceimpl;
@@ -45,8 +46,7 @@ public class AuthServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        // TODO: unnecessary cast to String
-        String method = (String) req.getParameter("method");
+        String method = req.getParameter("method");
 
         if (method != null) {
             if (method.equals("signIn")) {
@@ -83,6 +83,7 @@ public class AuthServlet extends HttpServlet {
         if (username != null) {
             session.removeAttribute("username");
             session.removeAttribute("password");
+            session.removeAttribute("role");
         }
 
         signIn(req, resp);
@@ -99,7 +100,7 @@ public class AuthServlet extends HttpServlet {
         String confirmPassword = req.getParameter("confirmPassword");
 
         if (password.equals(confirmPassword)) {
-            User user = new User(null, firstName, lastName, email, username, password);
+            User user = new User(null, firstName, lastName, email, username, password, Role.valueOf("USER"));
 
             try {
                 userServiceimpl.create(user);
@@ -114,11 +115,10 @@ public class AuthServlet extends HttpServlet {
             req.setAttribute("password", password);
 
             signInDo(req, resp);
+        } else {
+            RequestDispatcher dispatcher = req.getRequestDispatcher("auth/sign-up.jsp");
+            dispatcher.forward(req, resp);
         }
-
-
-        RequestDispatcher dispatcher = req.getRequestDispatcher("auth/sign-up.jsp");
-        dispatcher.forward(req, resp);
 
     }
 
@@ -140,6 +140,7 @@ public class AuthServlet extends HttpServlet {
         if (userToValidate != null) {
             session.setAttribute("username", username);
             session.setAttribute("password", password);
+            session.setAttribute("role", userToValidate.getRole().toString());
 
             resp.sendRedirect("car");
         } else {

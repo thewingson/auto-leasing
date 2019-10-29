@@ -5,15 +5,13 @@
   Time: 3:53 PM
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page session="true" %>
 <html>
 <head>
     <title>Sign-Up</title>
 </head>
 <body>
     <h3>Sign up</h3>
-    <form action="car" method="POST">
+    <form action="auth" method="POST">
         First name: <input type="text" name="firstName">
         <br/>
         Lastname: <input type="text" name="lastName">
@@ -23,6 +21,9 @@
         Username: <input type="text" name="username">
         <br/>
         Password: <input type="text" name="password"/>
+        <br/>
+        Confirm Password: <input type="text" name="confirmPassword"/>
+        <input type="hidden" value="signUp" name="method"/>
         <input type="submit" value="Submit"/>
     </form>
 

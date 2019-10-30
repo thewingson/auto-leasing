@@ -3,7 +3,7 @@ package kz.almat.service.impl;
 import kz.almat.dao.impl.UserDaoImpl;
 import kz.almat.model.User;
 import kz.almat.service.UserService;
-import kz.almat.util.ConnectionPool;
+import kz.almat.util.HikariConnectionPool;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -21,7 +21,7 @@ public class UserServiceimpl implements UserService {
 
     public List<User> getAll() throws SQLException {
 
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
         List<User> users = userDaoImpl.getList(connection);
 
         connection.close();
@@ -30,7 +30,7 @@ public class UserServiceimpl implements UserService {
 
     public User getById(Long userId) throws SQLException {
 
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
         User user = userDaoImpl.getById(connection, userId);
 
         connection.close();
@@ -38,7 +38,7 @@ public class UserServiceimpl implements UserService {
     }
 
     public void create(User user) throws SQLException {
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
 
         if (userDaoImpl.create(connection, user)) {
             connection.commit();
@@ -50,7 +50,7 @@ public class UserServiceimpl implements UserService {
 
     public void update(Long id, User user) throws SQLException {
 
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
 
         if (userDaoImpl.update(connection, id, user)) {
             connection.commit();
@@ -62,7 +62,7 @@ public class UserServiceimpl implements UserService {
 
     public void delete(Long id) throws SQLException {
 
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
 
         if (userDaoImpl.delete(connection, id)) {
             connection.commit();

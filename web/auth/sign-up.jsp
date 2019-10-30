@@ -27,7 +27,5 @@
         <input type="submit" value="Submit"/>
     </form>
 
-    <h3><% request.getSession().getAttribute("username");%> | <% request.getSession().getAttribute("password");%></h3>
-
 </body>
 </html>

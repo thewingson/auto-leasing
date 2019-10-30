@@ -17,11 +17,11 @@ import java.util.List;
 
 public class CarServlet extends HttpServlet {
 
-    private CarServiceImpl carServiceImpl;
+    private final CarServiceImpl carServiceImpl = new CarServiceImpl();
 
-    // TODO: missing @Override in every servlet. Having @Override improves readability and avoids compiler warnings
+    @Override
     public void init() {
-        carServiceImpl = new CarServiceImpl();
+
     }
 
     @Override

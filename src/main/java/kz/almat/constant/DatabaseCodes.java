@@ -1,7 +1,8 @@
 package kz.almat.constant;
 
-// TODO: Util classes should be closed for extension, i.e. be final and contain private constructors
-public class DatabaseCodes {
+public final class DatabaseCodes {
+
+    private DatabaseCodes(){}
 
     public static final String DB_USERNAME="db.username";
     public static final String DB_PASSWORD="db.password";

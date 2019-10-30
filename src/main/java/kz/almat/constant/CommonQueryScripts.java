@@ -1,15 +1,14 @@
 package kz.almat.constant;
 
-// TODO: Util classes should be closed for extension, i.e. be final and contain private constructors
-public class CommonQueryScripts {
+public final class CommonQueryScripts {
+
+    private CommonQueryScripts(){}
 
     public static final String INSERT = "INSERT INTO %s" +
             "  %s VALUES %s;";
-    public static final String SELECT_BY_ID = "select %s from %s where id =? limit 1";
+    public static final String SELECT_BY_COLUMN = "select %s from %s where %s";
     public static final String SELECT_ALL = "select * from %s";
-    public static final String DELETE_BY_ID = "delete from %s where id = ?;";
-    public static final String UPDATE = "update %s set %s where id = ?;";
-
-    public static final String SELECT_BY_COLUMN = "select %s from %s where %s =? limit 1";
+    public static final String DELETE_BY_COLUMN = "delete from %s where %s;";
+    public static final String UPDATE = "update %s set %s where %s;";
 
 }

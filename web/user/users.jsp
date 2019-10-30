@@ -5,14 +5,15 @@
   Time: 2:38 PM
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="kz.almat.model.User" %>
-<%@ page import="java.util.List" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <html>
 <head>
     <title>Users</title>
 </head>
 <body>
+<c:set var="role" value="${sessionScope.role}"/>
+<c:set var="users" value="${requestScope.users}"/>
 <form action = "user" method = "POST">
     First name: <input type = "text" name = "firstName">
     <br />
@@ -40,34 +41,24 @@
     </tr>
     </thead>
     <tbody>
-    <%
-        List<User> users = null;
-        if(request.getAttribute("users") != null){
-            users = (List) request.getAttribute("users");
-        }
-    %>
 
-    // TODO: here again is a really bad example of building JSP pages. Try applying JSTL, it is easy to work with
-    <%
-        if(users != null){
-            for (User u : users) {
-    %>
-    <tr>
-        <td style="border: 1px solid black"><%=u.getFirstName()%></td>
-        <td style="border: 1px solid black"><%=u.getLastName()%></td>
-        <td style="border: 1px solid black"><%=u.getEmail()%></td>
-        <td style="border: 1px solid black"><%=u.getUsername()%></td>
-        <td style="border: 1px solid black"><%=u.getPassword()%></td>
-        <td style="border: 1px solid black">
+    <c:forEach items="${users}" var="user">
+        <tr>
+            <td style="border: 1px solid black">${user.firstName}</td>
+            <td style="border: 1px solid black">${user.lastName}</td>
+            <td style="border: 1px solid black">${user.email}</td>
+            <td style="border: 1px solid black">${user.username}</td>
+            <td style="border: 1px solid black">${user.password}</td>
+            <td style="border: 1px solid black">
 
-            <a class="button" href="?method=update&id=<%=u.getId()%>">Edit</a>
-            <a class="button" href="?method=delete&id=<%=u.getId()%>">Delete</a>
-        </td>
-    </tr>
-    <%
-            }
-        }
-    %>
+            <c:if test="${role.equals('ADMIN')}">
+                <a class="button" href="?method=update&id=${user.id}">Edit</a>
+                <a class="button" href="?method=delete&id=${user.id}">Delete</a>
+            </c:if>
+            </td>
+        </tr>
+    </c:forEach>
+
     </tbody>
 
 </table>

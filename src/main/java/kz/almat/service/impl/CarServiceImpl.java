@@ -6,11 +6,9 @@ import kz.almat.model.Car;
 import kz.almat.model.User;
 import kz.almat.model.dto.CarDTO;
 import kz.almat.service.CarService;
-import kz.almat.util.ConnectionPool;
+import kz.almat.util.HikariConnectionPool;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +28,12 @@ public class CarServiceImpl implements CarService {
 
     public List<Car> getAll() throws SQLException {
 
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
         List<Car> cars = carDaoImpl.getList(connection);
         connection.close();
 
 //        try {
-//            connection = ConnectionPool.getConnection();
+//            connection = HikariConnectionPool.getConnection();
 //            cars = carDaoImpl.getList(connection);
 //        } finally {
 //            if (connection != null) {
@@ -48,12 +46,12 @@ public class CarServiceImpl implements CarService {
 
     public List<CarDTO> getAllDTO() throws SQLException {
 
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
         List<Car> cars = carDaoImpl.getList(connection);
         connection.close();
 
 //        try {
-//            connection = ConnectionPool.getConnection();
+//            connection = HikariConnectionPool.getConnection();
 //            cars = carDaoImpl.getList(connection);
 //        } finally {
 //            if (connection != null) {
@@ -72,7 +70,7 @@ public class CarServiceImpl implements CarService {
     }
 
     public Car getById(Long carId) throws SQLException {
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
         Car car = carDaoImpl.getById(connection, carId);
         connection.close();
 
@@ -80,7 +78,7 @@ public class CarServiceImpl implements CarService {
     }
 
     public CarDTO getByIdDTO(Long carId) throws SQLException {
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
         Car car = carDaoImpl.getById(connection, carId);
         connection.close();
 
@@ -89,7 +87,7 @@ public class CarServiceImpl implements CarService {
 
     public void create(Car car) throws SQLException {
 
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
         if (carDaoImpl.create(connection, car)) {
             connection.commit();
         }
@@ -99,7 +97,7 @@ public class CarServiceImpl implements CarService {
 
     public void update(Long id, Car car) throws SQLException {
 
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
 
         if (carDaoImpl.update(connection, id, car)) {
             connection.commit();
@@ -110,7 +108,7 @@ public class CarServiceImpl implements CarService {
     }
 
     public void delete(Long id) throws SQLException {
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
 
         if (carDaoImpl.delete(connection, id)) {
             connection.commit();
@@ -120,7 +118,7 @@ public class CarServiceImpl implements CarService {
     }
 
     public void rent(Long carId, String username) throws SQLException {
-        connection = ConnectionPool.getConnection();
+        connection = HikariConnectionPool.getConnection();
 
         User user = userDaoImpl.getByUsername(connection, username);
 

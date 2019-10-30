@@ -2,4 +2,5 @@
 /out/
 /target/
 
-# TODO: you should always include here *.iml, /.idea
+*.iml
+/.idea

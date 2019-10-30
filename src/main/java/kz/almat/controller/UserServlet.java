@@ -14,12 +14,10 @@ import java.util.List;
 
 public class UserServlet extends HttpServlet {
 
-    private UserServiceimpl userServiceimpl;
+    private final UserServiceimpl userServiceimpl = new UserServiceimpl();
 
-
-    public void init() {
-        userServiceimpl = new UserServiceimpl();
-    }
+    @Override
+    public void init() { }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)

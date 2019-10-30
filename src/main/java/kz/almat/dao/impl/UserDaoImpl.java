@@ -16,32 +16,42 @@ import java.util.Set;
 
 public class UserDaoImpl implements UserDao {
 
-    private static final String USER = "usr";
+    private static final String USER = "user";
     private static final String USER_ROLE = "user_role";
-    private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
 
     private static final String ALL_COLUMNS = "id,first_name,last_name,email,username,password";
     private static final String ALL_COLUMNS_CREATE = "(first_name,last_name,email,username,password)";
     private static final String ALL_COLUMNS_UPDATE = "first_name = ?, last_name= ?, email =?, username = ?, password = ?";
-    private static final String STATEMENT_VALUES_CREATE = "(?, ?, ?, ?, ?)";
 
-    private static final String ALL_COLUMNS_USER_ROLE_CREATE = "(user_id, role_id)";
+    private static final String STATEMENT_VALUES_CREATE = "(?, ?, ?, ?, ?)";
     private static final String STATEMENT_VALUES_USER_ROLE_CREATE = "(?, ?)";
 
+    private static final String ID_EQUALS = "id = ?";
+    private static final String USERNAME_EQUALS = "username = ?";
+
+    private static final String ALL_COLUMNS_USER_ROLE_CREATE = "(user_id, role_id)";
+
     private static final String SELECT_ALL_USERS = String.format(CommonQueryScripts.SELECT_ALL, USER);
-    private static final String SELECT_USER_BY_ID = String.format(CommonQueryScripts.SELECT_BY_ID, ALL_COLUMNS, USER);
-    private static final String SELECT_USER_BY_USERNAME = String.format(CommonQueryScripts.SELECT_BY_COLUMN, ALL_COLUMNS, USER, USERNAME);
+    private static final String SELECT_USER_BY_ID = String.format(CommonQueryScripts.SELECT_BY_COLUMN, ALL_COLUMNS, USER, ID_EQUALS);
+    private static final String SELECT_USER_BY_USERNAME = String.format(CommonQueryScripts.SELECT_BY_COLUMN, ALL_COLUMNS, USER, USERNAME_EQUALS);
     private static final String INSERT_USER_SQL = String.format(CommonQueryScripts.INSERT, USER, ALL_COLUMNS_CREATE, STATEMENT_VALUES_CREATE);
-    private static final String DELETE_USER_BY_ID = String.format(CommonQueryScripts.DELETE_BY_ID, USER);
-    private static final String UPDATE_USER = String.format(CommonQueryScripts.UPDATE, USER, ALL_COLUMNS_UPDATE);
+    private static final String DELETE_USER_BY_ID = String.format(CommonQueryScripts.DELETE_BY_COLUMN, USER, ID_EQUALS);
+    private static final String UPDATE_USER = String.format(CommonQueryScripts.UPDATE, USER, ALL_COLUMNS_UPDATE, ID_EQUALS);
+
     private static final String SELECT_USER_BY_EMAIL_AND_PASSWORD =
-            "select u.id, u.first_name, u.last_name, u.email, u.username, u.password, r.name as role from usr u\n" +
+            "select u.id, u.first_name, u.last_name, u.email, u.username, u.password, r.name as role from user u\n" +
                     "inner join user_role ur on ur.user_id = u.id \n" +
                     "inner join role r on r.id = ur.role_id \n" +
-                    "where u.username = ? and u.password = ? limit 1";
+                    "where u.username = ? and u.password = ?";
+
+    private static final String SELECT_USER_BY_USERNAME_1 =
+            "select u.id, u.first_name, u.last_name, u.email, u.username, u.password, r.name as role from user u\n" +
+                    "inner join user_role ur on ur.user_id = u.id \n" +
+                    "inner join role r on r.id = ur.role_id \n" +
+                    "where u.username = ?";
+
     private static final String SELECT_MAX_ID =
-            "select max(id) from usr";
+            "select max(id) from user";
 
 
     private static final String INSERT_USER_ROLE = String.format(CommonQueryScripts.INSERT, USER_ROLE, ALL_COLUMNS_USER_ROLE_CREATE, STATEMENT_VALUES_USER_ROLE_CREATE);
@@ -150,7 +160,7 @@ public class UserDaoImpl implements UserDao {
     public User getByUsername(Connection connection, String username) throws SQLException {
         User user = null;
 
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_USERNAME);
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_USERNAME_1);
         preparedStatement.setString(1, username);
         ResultSet rs = preparedStatement.executeQuery();
 

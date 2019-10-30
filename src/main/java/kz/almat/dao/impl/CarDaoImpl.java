@@ -20,21 +20,24 @@ public class CarDaoImpl implements CarDao {
     private static final String ALL_COLUMNS_UPDATE = "mark = ?, model= ?, registered_number =?";
     private static final String STATEMENT_VALUES_CREATE = "(?, ?, ?)";
 
+    private static final String ID_EQUALS = "id = ?";
+    private static final String RENTOR_EQUALS = "rentor_id =?";
+
+
     private static final String SELECT_JOIN_USER = "select c.id, c.mark, c.model, c.registered_number, u.id as rentor_id, u.username" +
-                                                    " from car c " +
-                                                    " left join usr u on u.id = c.rentor_id";
+            " from car c " +
+            " left join user u on u.id = c.rentor_id";
 
     private static final String SELECT_BY_ID_JOIN_USER = SELECT_JOIN_USER + " where c.id = ?";
 
-    private static final String RENTOR_UPDATE = "rentor_id =?";
 
     private static final String SELECT_ALL_CARS = String.format(CommonQueryScripts.SELECT_ALL, CAR);
-    private static final String SELECT_CAR_BY_ID = String.format(CommonQueryScripts.SELECT_BY_ID, ALL_COLUMNS, CAR);
+    private static final String SELECT_CAR_BY_ID = String.format(CommonQueryScripts.SELECT_BY_COLUMN, ALL_COLUMNS, CAR, ID_EQUALS);
     private static final String INSERT_CAR_SQL = String.format(CommonQueryScripts.INSERT, CAR, ALL_COLUMNS_CREATE, STATEMENT_VALUES_CREATE);
-    private static final String DELETE_CAR_BY_ID = String.format(CommonQueryScripts.DELETE_BY_ID, CAR);
-    private static final String UPDATE_CAR = String.format(CommonQueryScripts.UPDATE, CAR, ALL_COLUMNS_UPDATE);
+    private static final String DELETE_CAR_BY_ID = String.format(CommonQueryScripts.DELETE_BY_COLUMN, CAR, ID_EQUALS);
+    private static final String UPDATE_CAR = String.format(CommonQueryScripts.UPDATE, CAR, ALL_COLUMNS_UPDATE, ID_EQUALS);
 
-    private static final String UPDATE_RENTOR = String.format(CommonQueryScripts.UPDATE, CAR, RENTOR_UPDATE);
+    private static final String UPDATE_RENTOR = String.format(CommonQueryScripts.UPDATE, CAR, RENTOR_EQUALS, ID_EQUALS);
 
     public CarDaoImpl() {
     }
@@ -92,7 +95,7 @@ public class CarDaoImpl implements CarDao {
         return (1 == statement.executeUpdate());
     }
 
-    private Car build(ResultSet rs){
+    private Car build(ResultSet rs) {
         Long carId = null;
         String mark = null;
         String model = null;
@@ -111,7 +114,7 @@ public class CarDaoImpl implements CarDao {
             e.printStackTrace();
         }
 
-        return new Car(carId, mark, model, registeredNumber, new User(rentor_id,null,null,null,username, null));
+        return new Car(carId, mark, model, registeredNumber, new User(rentor_id, null, null, null, username, null));
     }
 
     public boolean rent(Connection connection, Long carId, Long userId) throws SQLException {

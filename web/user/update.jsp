@@ -5,28 +5,27 @@
   Time: 2:38 PM
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="kz.almat.model.User" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <html>
 <head>
     <title>Update</title>
 </head>
 <body>
+<c:set var="user" value="${requestScope.user}"/>
+
 <h3>Update</h3>
-<%
-    User userToUpdate = (User) request.getAttribute("user");
-%>
 <form action = "user" method = "POST">
-    First name: <input type = "text" name = "firstName" placeholder="<%=userToUpdate.getFirstName()%>">
+    First name: <input type = "text" name = "firstName" placeholder="${user.firstName}">
     <br />
-    Last name: <input type = "text" name = "lastName" placeholder="<%=userToUpdate.getLastName()%>"/>
+    Last name: <input type = "text" name = "lastName" placeholder="${user.lastName}"/>
     <br />
-    Email: <input type = "text" name = "email" placeholder="<%=userToUpdate.getEmail()%>"/>
+    Email: <input type = "text" name = "email" placeholder="${user.email}"/>
     <br />
-    Username: <input type = "text" name = "username" placeholder="<%=userToUpdate.getUsername()%>"/>
+    Username: <input type = "text" name = "username" placeholder="${user.username}"/>
     <br />
-    Password: <input type = "text" name = "password" placeholder="<%=userToUpdate.getPassword()%>"/>
-    <input type = "hidden" name = "id" value="<%=userToUpdate.getId()%>"/>
+    Password: <input type = "text" name = "password" placeholder="${user.password}"/>
+    <input type = "hidden" name = "id" value="${user.id}"/>
     <input type = "hidden" name = "method" value="update"/>
     <input type = "submit" value = "Submit" />
 </form>

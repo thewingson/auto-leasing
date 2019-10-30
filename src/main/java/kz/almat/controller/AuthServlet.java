@@ -1,5 +1,6 @@
 package kz.almat.controller;
 
+import kz.almat.constant.CommonViewParameters;
 import kz.almat.model.Role;
 import kz.almat.model.User;
 import kz.almat.service.impl.AuthServiceImpl;
@@ -16,13 +17,11 @@ import java.sql.SQLException;
 
 public class AuthServlet extends HttpServlet {
 
-    // TODO: servlets should not have mutable fields since all threads share servlet instances. So all of the fields should be declared final if they are needed
-    private UserServiceimpl userServiceimpl;
-    private AuthServiceImpl authServiceImpl;
+    private final UserServiceimpl userServiceimpl = new UserServiceimpl();
+    private final AuthServiceImpl authServiceImpl = new AuthServiceImpl();
 
+    @Override
     public void init() {
-        userServiceimpl = new UserServiceimpl();
-        authServiceImpl = new AuthServiceImpl();
     }
 
     @Override
@@ -53,6 +52,8 @@ public class AuthServlet extends HttpServlet {
                 signIn(req, resp);
             } else if (method.equals("signUp")) {
                 signUp(req, resp);
+            } else if (method.equals("signOut")) {
+                signOutDo(req, resp);
             }
         } else {
             signIn(req, resp);
@@ -75,15 +76,14 @@ public class AuthServlet extends HttpServlet {
     }
 
     protected void signOutDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO: here username and password should be extracted to constants as well. They're repeated too many times.
         HttpSession session = req.getSession();
-        String username = (String) session.getAttribute("username");
+        String username = (String) session.getAttribute(CommonViewParameters.USERNAME);
 
         // TODO: session.invalidate() is used for this purpose
         if (username != null) {
-            session.removeAttribute("username");
-            session.removeAttribute("password");
-            session.removeAttribute("role");
+            session.removeAttribute(CommonViewParameters.USERNAME);
+            session.removeAttribute(CommonViewParameters.PASSWORD);
+            session.removeAttribute(CommonViewParameters.ROLE);
         }
 
         signIn(req, resp);
@@ -95,8 +95,8 @@ public class AuthServlet extends HttpServlet {
         String firstName = req.getParameter("firstName");
         String lastName = req.getParameter("lastName");
         String email = req.getParameter("email");
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
+        String username = req.getParameter(CommonViewParameters.USERNAME);
+        String password = req.getParameter(CommonViewParameters.PASSWORD);
         String confirmPassword = req.getParameter("confirmPassword");
 
         if (password.equals(confirmPassword)) {
@@ -111,8 +111,8 @@ public class AuthServlet extends HttpServlet {
                 e.printStackTrace();
             }
 
-            req.setAttribute("username", username);
-            req.setAttribute("password", password);
+            req.setAttribute(CommonViewParameters.USERNAME, username);
+            req.setAttribute(CommonViewParameters.PASSWORD, password);
 
             signInDo(req, resp);
         } else {
@@ -124,8 +124,8 @@ public class AuthServlet extends HttpServlet {
 
     protected void signInDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
+        String username = req.getParameter(CommonViewParameters.USERNAME);
+        String password = req.getParameter(CommonViewParameters.PASSWORD);
 
         User userToValidate = null;
 
@@ -138,9 +138,9 @@ public class AuthServlet extends HttpServlet {
         HttpSession session = req.getSession();
 
         if (userToValidate != null) {
-            session.setAttribute("username", username);
-            session.setAttribute("password", password);
-            session.setAttribute("role", userToValidate.getRole().toString());
+            session.setAttribute(CommonViewParameters.USERNAME, username);
+            session.setAttribute(CommonViewParameters.PASSWORD, password);
+            session.setAttribute(CommonViewParameters.ROLE, userToValidate.getRole().toString());
 
             resp.sendRedirect("car");
         } else {

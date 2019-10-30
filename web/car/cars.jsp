@@ -5,20 +5,23 @@
   Time: 4:07 PM
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page import="kz.almat.model.dto.CarDTO" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.stream.Stream" %>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>Cars</title>
 </head>
 <body>
+
+<c:set var="role" value="${sessionScope.role}"/>
+<c:set var="cars" value="${requestScope.cars}"/>
+
 <form action="car" method="POST">
     Mark: <input type="text" name="mark">
     <br/>
     Model: <input type="text" name="model"/>
     <br/>
-    Year: <input type="text" name="registeredNumber"/>
+    Number: <input type="text" name="registeredNumber"/>
     <input type="submit" value="Submit"/>
 </form>
 
@@ -29,51 +32,34 @@
         <th style="border: 2px solid black">ID</th>
         <th style="border: 2px solid black">Mark</th>
         <th style="border: 2px solid black">Model</th>
-        <th style="border: 2px solid black">Year</th>
+        <th style="border: 2px solid black">Number</th>
         <th style="border: 2px solid black">Rentor</th>
         <th style="border: 2px solid black">Action</th>
     </tr>
     </thead>
     <tbody style="border: 2px solid black">
-    <%
-        List<CarDTO> cars = (List<CarDTO>) request.getAttribute("cars");
 
-        String role = (String) session.getAttribute("role");
-
-    %>
-
-    <%
-        if (cars != null) {
-            for (CarDTO c : cars) {
-    %>
+    <c:forEach items="${cars}" var="car">
     <tr>
-        <td style="border: 1px solid black"><a class="button" href="?method=getOne&id=<%=c.getId()%>"><%=c.getId()%>
-        </a>
+        <td style="border: 1px solid black"><a class="button" href="?method=getOne&id=${car.id}">${car.id}</a>
         </td>
-        <td style="border: 1px solid black"><%=c.getMark()%>
-        </td>
-        <td style="border: 1px solid black"><%=c.getModel()%>
-        </td>
-        <td style="border: 1px solid black"><%=c.getRegisteredNumber()%>
-        </td>
-        <td style="border: 1px solid black"><%=c.getRentor_id()%>
-        </td>
-        <td style="border: 1px solid black">
-            <% if (role != null && role.equals("ADMIN")) { %>
-            <a class="button" href="?method=update&id=<%=c.getId()%>">Edit</a>
-            <a class="button" href="?method=delete&id=<%=c.getId()%>">Delete</a>
-            <% } %>
+        <td>${car.mark}</td>
+        <td>${car.model}</td>
+        <td>${car.registeredNumber}</td>
+        <td>${car.rentor_id}</td>
 
-            <% if (request.getSession().getAttribute("username") != null && c.getRentor_id() == null) { %>
-            <%--            //&& c.getRentor() == null--%>
-            <a class="button" href="?method=rent&id=<%=c.getId()%>">Rent</a>
-            <% } %>
+        <td>
+            <c:if test="${car.rentor_id == 0 && sessionScope.username != null && role.equals('USER')}">
+                <a class="button" href="?method=rent&id=${car.id}">Rent</a>
+            </c:if>
+            <c:if test="${role.equals('ADMIN')}">
+                <a class="button" href="?method=update&id=${car.id}">Edit</a>
+                <a class="button" href="?method=delete&id=${car.id}">Delete</a>
+            </c:if>
         </td>
     </tr>
-    <%
-            }
-        }
-    %>
+    </c:forEach>
+
     </tbody>
 
 </table>

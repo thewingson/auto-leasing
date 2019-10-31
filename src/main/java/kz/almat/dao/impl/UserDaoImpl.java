@@ -10,9 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class UserDaoImpl implements UserDao {
 
@@ -56,84 +54,108 @@ public class UserDaoImpl implements UserDao {
 
     private static final String INSERT_USER_ROLE = String.format(CommonQueryScripts.INSERT, USER_ROLE, ALL_COLUMNS_USER_ROLE_CREATE, STATEMENT_VALUES_USER_ROLE_CREATE);
 
-    public List<User> getList(Connection connection) throws SQLException {
-        List<User> users = new ArrayList<User>();
+    public List<User> getList(Connection connection) {
+        List<User> users = new ArrayList<>();
 
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);
-        ResultSet rs = preparedStatement.executeQuery();
-
-        while (rs.next()) {
-            users.add(build(rs));
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS)) {
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    users.add(build(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return users;
     }
 
-    public User getById(Connection connection, Long id) throws SQLException {
+    public User getById(Connection connection, Long id) {
         User user = null;
 
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID);
-        preparedStatement.setLong(1, id);
-        ResultSet rs = preparedStatement.executeQuery();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID)) {
+            preparedStatement.setLong(1, id);
 
-        if (rs.next()) {
-            user = build(rs);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    user = build(rs);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return user;
     }
 
-    public boolean create(Connection connection, User user) throws SQLException {
+    public boolean create(Connection connection, User user) {
 
-        PreparedStatement statement = connection.prepareStatement(INSERT_USER_SQL);
-        statement.setString(1, user.getFirstName());
-        statement.setString(2, user.getLastName());
-        statement.setString(3, user.getEmail());
-        statement.setString(4, user.getUsername());
-        statement.setString(5, user.getPassword());
+        try (PreparedStatement statement = connection.prepareStatement(INSERT_USER_SQL)) {
+            statement.setString(1, user.getFirstName());
+            statement.setString(2, user.getLastName());
+            statement.setString(3, user.getEmail());
+            statement.setString(4, user.getUsername());
+            statement.setString(5, user.getPassword());
 
-        statement.execute();
+            statement.execute();
 
-        statement = connection.prepareStatement(SELECT_MAX_ID);
-        statement.executeQuery();
-        ResultSet rs = statement.executeQuery();
-        int max = 0;
-
-        if (rs.next()) {
-            max = rs.getInt("max");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        statement = connection.prepareStatement(INSERT_USER_ROLE);
-        statement.setLong(1, max);
-        statement.setLong(2, 2);
+        int max = -1;
+        try (PreparedStatement statement = connection.prepareStatement(SELECT_MAX_ID)) {
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    max = rs.getInt("max");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        statement.execute();
+        try (PreparedStatement statement = connection.prepareStatement(INSERT_USER_ROLE)) {
+            statement.setLong(1, max);
+            statement.setLong(2, 2);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return true;
     }
 
-    public boolean update(Connection connection, Long id, User user) throws SQLException {
+    public boolean update(Connection connection, Long id, User user) {
 
-        PreparedStatement statement = connection.prepareStatement(UPDATE_USER);
-        statement.setString(1, user.getFirstName());
-        statement.setString(2, user.getLastName());
-        statement.setString(3, user.getEmail());
-        statement.setString(4, user.getUsername());
-        statement.setString(5, user.getPassword());
-        statement.setLong(6, id);
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_USER)) {
+            statement.setString(1, user.getFirstName());
+            statement.setString(2, user.getLastName());
+            statement.setString(3, user.getEmail());
+            statement.setString(4, user.getUsername());
+            statement.setString(5, user.getPassword());
+            statement.setLong(6, id);
 
-        return (1 == statement.executeUpdate());
+            return (1 == statement.executeUpdate());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public boolean delete(Connection connection, Long id) throws SQLException {
+    public boolean delete(Connection connection, Long id) {
 
-        PreparedStatement statement = connection.prepareStatement(DELETE_USER_BY_ID);
-        statement.setLong(1, id);
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_USER_BY_ID)) {
+            statement.setLong(1, id);
 
-        return (1 == statement.executeUpdate());
+            return (1 == statement.executeUpdate());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
-    private User build(ResultSet rs){
+    private User build(ResultSet rs) {
         Long userId = null;
         String firstName = null;
         String lastName = null;
@@ -157,30 +179,39 @@ public class UserDaoImpl implements UserDao {
         return new User(userId, firstName, lastName, email, username, password, Role.valueOf(role));
     }
 
-    public User getByUsername(Connection connection, String username) throws SQLException {
+    public User getByUsername(Connection connection, String username) {
         User user = null;
 
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_USERNAME_1);
-        preparedStatement.setString(1, username);
-        ResultSet rs = preparedStatement.executeQuery();
 
-        if (rs.next()) {
-            user = build(rs);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_USERNAME_1)) {
+            preparedStatement.setString(1, username);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    user = build(rs);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return user;
+
     }
 
-    public User getByUsernameAndPassword(Connection connection, String username, String password) throws SQLException {
+    public User getByUsernameAndPassword(Connection connection, String username, String password) {
         User user = null;
 
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL_AND_PASSWORD);
-        preparedStatement.setString(1, username);
-        preparedStatement.setString(2, password);
-        ResultSet rs = preparedStatement.executeQuery();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL_AND_PASSWORD)) {
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
 
-        if (rs.next()) {
-            user = build(rs);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    user = build(rs);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return user;

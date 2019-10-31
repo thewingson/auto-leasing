@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 public class UserServlet extends HttpServlet {
@@ -17,7 +16,8 @@ public class UserServlet extends HttpServlet {
     private final UserServiceimpl userServiceimpl = new UserServiceimpl();
 
     @Override
-    public void init() { }
+    public void init() {
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -57,12 +57,7 @@ public class UserServlet extends HttpServlet {
     protected void getOne(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
-        User user = null;
-        try {
-            user = userServiceimpl.getById(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        User user = userServiceimpl.getById(id);
         req.setAttribute("user", user);
         RequestDispatcher dispatcher = req.getRequestDispatcher("user/user.jsp");
         dispatcher.forward(req, resp);
@@ -71,12 +66,7 @@ public class UserServlet extends HttpServlet {
 
     protected void getList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        List<User> users = null;
-        try {
-            users = userServiceimpl.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        List<User> users = userServiceimpl.getAll();
         req.setAttribute("users", users);
         RequestDispatcher dispatcher = req.getRequestDispatcher("user/users.jsp");
         dispatcher.forward(req, resp);
@@ -92,12 +82,7 @@ public class UserServlet extends HttpServlet {
         String password = req.getParameter("password");
 
         User user = new User(null, firstName, lastName, email, username, password);
-        try {
-            userServiceimpl.create(user);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        userServiceimpl.create(user);
         getList(req, resp);
 
     }
@@ -105,11 +90,7 @@ public class UserServlet extends HttpServlet {
     protected void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Long.parseLong(req.getParameter("id"));
 
-        try {
-            userServiceimpl.delete(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        userServiceimpl.delete(id);
 
         getList(req, resp);
     }
@@ -118,14 +99,7 @@ public class UserServlet extends HttpServlet {
 
         Long id = Long.parseLong(req.getParameter("id"));
 
-        User userToUpdate = null;
-        try {
-            userToUpdate = userServiceimpl.getById(id);
-        }
-        // TODO: this is what I referred to in services. Service layer should be responsible for handling these exceptions
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
+        User userToUpdate = userServiceimpl.getById(id);
         req.setAttribute("user", userToUpdate);
         req.getRequestDispatcher("user/update.jsp").forward(req, resp);
 
@@ -143,11 +117,7 @@ public class UserServlet extends HttpServlet {
 
         User userToUpdate = new User(id, firstName, lastName, email, username, password);
 
-        try {
-            userServiceimpl.update(id, userToUpdate);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        userServiceimpl.update(id, userToUpdate);
 
         getList(req, resp);
 

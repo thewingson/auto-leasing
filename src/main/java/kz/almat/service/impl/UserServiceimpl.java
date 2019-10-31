@@ -11,64 +11,73 @@ import java.util.List;
 
 public class UserServiceimpl implements UserService {
 
-    private Connection connection;
-
     private UserDaoImpl userDaoImpl;
 
     public UserServiceimpl() {
         this.userDaoImpl = new UserDaoImpl();
     }
 
-    public List<User> getAll() throws SQLException {
+    public List<User> getAll() {
 
-        connection = HikariConnectionPool.getConnection();
-        List<User> users = userDaoImpl.getList(connection);
-
-        connection.close();
-        return users;
-    }
-
-    public User getById(Long userId) throws SQLException {
-
-        connection = HikariConnectionPool.getConnection();
-        User user = userDaoImpl.getById(connection, userId);
-
-        connection.close();
-        return user;
-    }
-
-    public void create(User user) throws SQLException {
-        connection = HikariConnectionPool.getConnection();
-
-        if (userDaoImpl.create(connection, user)) {
-            connection.commit();
-
-        }
-        connection.close();
-
-    }
-
-    public void update(Long id, User user) throws SQLException {
-
-        connection = HikariConnectionPool.getConnection();
-
-        if (userDaoImpl.update(connection, id, user)) {
-            connection.commit();
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            return userDaoImpl.getList(connection);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        connection.close();
+        return null;
+    }
+
+    public User getById(Long userId) {
+
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            return userDaoImpl.getById(connection, userId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public void create(User user) {
+
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            if (userDaoImpl.create(connection, user)) {
+                connection.commit();
+            } else {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    public void delete(Long id) throws SQLException {
+    public void update(Long id, User user) {
 
-        connection = HikariConnectionPool.getConnection();
-
-        if (userDaoImpl.delete(connection, id)) {
-            connection.commit();
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            if (userDaoImpl.update(connection, id, user)) {
+                connection.commit();
+            } else {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        connection.close();
+    }
+
+    public void delete(Long id) {
+
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            if (userDaoImpl.delete(connection, id)) {
+                connection.commit();
+            } else {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 }

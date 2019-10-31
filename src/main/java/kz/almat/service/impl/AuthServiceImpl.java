@@ -10,8 +10,6 @@ import java.sql.SQLException;
 
 public class AuthServiceImpl implements AuthService {
 
-    private Connection connection;
-
     private UserDaoImpl userDaoImpl;
 
     public AuthServiceImpl() {
@@ -20,13 +18,15 @@ public class AuthServiceImpl implements AuthService {
 
     private static final String SELECT_USER_BY_EMAIL_AND_PASSWORD = "select id, first_name, last_name, email, username, password from user where username =? and password=?";
 
-    public User authenticate(String usernameToValidate, String passwordToValidate) throws SQLException {
-        User user;
-        connection = HikariConnectionPool.getConnection();
-        user = userDaoImpl.getByUsernameAndPassword(connection, usernameToValidate, passwordToValidate);
+    public User authenticate(String usernameToValidate, String passwordToValidate) {
 
-        connection.close();
-        return user;
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            return userDaoImpl.getByUsernameAndPassword(connection, usernameToValidate, passwordToValidate);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public boolean validate(String username, String password) {

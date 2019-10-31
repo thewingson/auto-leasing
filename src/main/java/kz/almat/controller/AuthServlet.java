@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class AuthServlet extends HttpServlet {
 
@@ -102,14 +101,7 @@ public class AuthServlet extends HttpServlet {
         if (password.equals(confirmPassword)) {
             User user = new User(null, firstName, lastName, email, username, password, Role.valueOf("USER"));
 
-            try {
-                userServiceimpl.create(user);
-            }
-            // TODO: printing stacktraces should be replaced by loggers. But anyway this way of exception handling should be moved to services
-            //  as I've written earlier
-            catch (SQLException e) {
-                e.printStackTrace();
-            }
+            userServiceimpl.create(user);
 
             req.setAttribute(CommonViewParameters.USERNAME, username);
             req.setAttribute(CommonViewParameters.PASSWORD, password);
@@ -127,13 +119,7 @@ public class AuthServlet extends HttpServlet {
         String username = req.getParameter(CommonViewParameters.USERNAME);
         String password = req.getParameter(CommonViewParameters.PASSWORD);
 
-        User userToValidate = null;
-
-        try {
-            userToValidate = authServiceImpl.authenticate(username, password);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        User userToValidate = authServiceImpl.authenticate(username, password);
 
         HttpSession session = req.getSession();
 

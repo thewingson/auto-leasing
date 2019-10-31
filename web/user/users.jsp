@@ -15,7 +15,7 @@
 <c:set var="role" value="${sessionScope.role}"/>
 <c:set var="users" value="${requestScope.users}"/>
 <form action = "user" method = "POST">
-    First name: <input type = "text" name = "firstName">
+    First name: <input type = "text" name = "firstName" />
     <br />
     Last name: <input type = "text" name = "lastName" />
     <br />
@@ -24,6 +24,7 @@
     Username: <input type = "text" name = "username" />
     <br />
     Password: <input type = "text" name = "password" />
+    <input type="hidden" name="method" value="create"/>
     <input type = "submit" value = "Submit" />
 </form>
 

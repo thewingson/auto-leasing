@@ -22,16 +22,23 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        String method = req.getParameter("method");
 
-        if (method != null) {
-            if (method.equals("update")) {
+        String method = "";
+
+        if (req.getParameter("method") != null){
+            method =  req.getParameter("method");
+        }
+
+        switch (method){
+            case "update":
                 updateDo(req, resp);
-            } else if (method.equals("delete")) {
-                delete(req, resp);
-            }
-        } else {
-            create(req, resp);
+                break;
+            case "create":
+                create(req, resp);
+                break;
+            default:
+                getList(req, resp);
+                break;
         }
 
     }
@@ -40,16 +47,25 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String method = req.getParameter("method");
+        String method = "";
 
-        if (method != null) {
-            if (method.equals("update")) {
+        if (req.getParameter("method") != null){
+           method =  req.getParameter("method");
+        }
+
+        switch (method){
+            case "update":
                 update(req, resp);
-            } else if (method.equals("getOne")) {
+                break;
+            case "getOne":
                 getOne(req, resp);
-            }
-        } else {
-            getList(req, resp);
+                break;
+            case "delete":
+                delete(req, resp);
+                break;
+            default:
+                getList(req, resp);
+                break;
         }
 
     }

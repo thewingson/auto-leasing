@@ -33,6 +33,7 @@
     Model: <input type="text" name="model"/>
     <br/>
     Number: <input type="text" name="registeredNumber"/>
+    <input type="hidden" name="method" value="create"/>
     <input type="submit" value="Submit"/>
 </form>
 

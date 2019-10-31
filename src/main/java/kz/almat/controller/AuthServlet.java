@@ -26,14 +26,18 @@ public class AuthServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        String method = req.getParameter("method");
+        String method = "";
+        if(req.getParameter("method") != null){
+            method = req.getParameter("method");
+        }
 
-        if (method != null) {
-            if (method.equals("signUp")) {
-                signUpDo(req, resp);
-            } else if (method.equals("signIn")) {
+        switch (method){
+            case "signIn":
                 signInDo(req, resp);
-            }
+                break;
+            case "signUp":
+                signUpDo(req, resp);
+                break;
         }
 
     }
@@ -42,18 +46,24 @@ public class AuthServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String method = req.getParameter("method");
+        String method = "";
+        if(req.getParameter("method") != null){
+            method = req.getParameter("method");
+        }
 
-        if (method != null) {
-            if (method.equals("signIn")) {
+        switch (method){
+            case "signIn":
                 signIn(req, resp);
-            } else if (method.equals("signUp")) {
+                break;
+            case "signUp":
                 signUp(req, resp);
-            } else if (method.equals("signOut")) {
+                break;
+            case "SignOut":
                 signOutDo(req, resp);
-            }
-        } else {
-            signIn(req, resp);
+                break;
+            default:
+                signIn(req, resp);
+                break;
         }
 
     }

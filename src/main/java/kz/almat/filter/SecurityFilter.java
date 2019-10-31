@@ -7,6 +7,9 @@ import java.io.IOException;
 public class SecurityFilter implements Filter {
 
     private String role;
+    private String requestPath;
+    private String ADMIN = "ADMIN";
+    private String USER = "USER";
 
     public void init(FilterConfig filterConfig) {
 
@@ -17,52 +20,81 @@ public class SecurityFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         role = (String) request.getSession().getAttribute("role");
 
-        if (request.getServletPath().equals("/car")) {
-            car(servletRequest, servletResponse, filterChain);
-        } else if (request.getServletPath().equals("/user")) {
-//            user(servletRequest, servletResponse, filterChain); for future
-        } else {
-            RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("error/not-found.jsp");
-            dispatcher.forward(servletRequest, servletResponse);
+        requestPath = request.getServletPath();
+
+        switch (requestPath) {
+            case "/car":
+                car(servletRequest, servletResponse, filterChain);
+                break;
+            case "/user":
+                user(servletRequest, servletResponse, filterChain);
+                break;
+            default:
+                RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("error/not-found.jsp");
+                dispatcher.forward(servletRequest, servletResponse);
+                break;
+
         }
+
 
     }
 
     public void car(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
-        String method = servletRequest.getParameter("method");
-        if (method == null) {                                                                                             // READ
-            filterChain.doFilter(servletRequest, servletResponse);
-        } else if ((method.equals("create") ||
-                method.equals("update") ||
-                method.equals("delete")) &&
-                role != null && role.equals("ADMIN")) {
+        String method = "";
 
+        if (servletRequest.getParameter("method") != null) {
+            method = servletRequest.getParameter("method");
+        }
+
+        switch (method) {
+            case "create":
+                roleCheck(ADMIN, servletRequest, servletResponse, filterChain);
+                break;
+            case "update":
+                roleCheck(ADMIN, servletRequest, servletResponse, filterChain);
+                break;
+            case "delete":
+                roleCheck(ADMIN, servletRequest, servletResponse, filterChain);
+                break;
+            case "rent":
+                roleCheck(USER, servletRequest, servletResponse, filterChain);
+                break;
+            case "return":
+                roleCheck(USER, servletRequest, servletResponse, filterChain);
+                break;
+            default:
                 filterChain.doFilter(servletRequest, servletResponse);
-        } else if((method.equals("rent") ||
-                method.equals("return")) &&
-                role != null && role.equals("USER")){
-            filterChain.doFilter(servletRequest, servletResponse);
-        } else {
-            RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("error/not-authorized.jsp");
-            dispatcher.forward(servletRequest, servletResponse);
+                break;
         }
     }
 
     public void user(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
-        String method = servletRequest.getParameter("method");
-        if (method == null) {                                                                                             // READ
-            filterChain.doFilter(servletRequest, servletResponse);
-        } else if ((method.equals("create") ||
-                method.equals("update") ||
-                method.equals("delete")) &&
-                role != null && (role.equals("ADMIN"))) {
+        String method = "";
 
-            filterChain.doFilter(servletRequest, servletResponse);
-        } else if((method.equals("rent") ||
-                method.equals("return")) &&
-                role != null && role.equals("USER")){
+        if (servletRequest.getParameter("method") != null) {
+            method = servletRequest.getParameter("method");
+        }
+
+        switch (method) {
+            case "create":
+                roleCheck(ADMIN, servletRequest, servletResponse, filterChain);
+                break;
+            case "update":
+                roleCheck(ADMIN, servletRequest, servletResponse, filterChain);
+                break;
+            case "delete":
+                roleCheck(ADMIN, servletRequest, servletResponse, filterChain);
+                break;
+            default:
+                filterChain.doFilter(servletRequest, servletResponse);
+                break;
+        }
+    }
+
+    private void roleCheck(String necessaryRole, ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        if (role != null && role.equals(necessaryRole)) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
             RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("error/not-authorized.jsp");

@@ -29,8 +29,6 @@ public class HikariConnectionPool {
         hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
         hikariDataSource = new HikariDataSource(hikariConfig);
 
-        hikariDataSource.close();
-
     }
 
     public static Connection getConnection() throws SQLException {

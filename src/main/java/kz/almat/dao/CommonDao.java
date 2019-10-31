@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface CommonDao<E> {
 
-    List<E> getList(Connection connection) throws SQLException;
+    List<E> getList(Connection connection);
 
-    E getById(Connection connection, Long id) throws SQLException;
+    E getById(Connection connection, Long id);
 
-    boolean create(Connection connection, E entity) throws SQLException;
+    boolean create(Connection connection, E entity);
 
-    boolean update(Connection connection, Long id, E entity) throws SQLException;
+    boolean update(Connection connection, Long id, E entity);
 
-    boolean delete(Connection connection, Long id) throws SQLException;
+    boolean delete(Connection connection, Long id);
 
 }

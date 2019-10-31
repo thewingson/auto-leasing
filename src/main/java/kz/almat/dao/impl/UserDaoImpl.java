@@ -17,7 +17,6 @@ public class UserDaoImpl implements UserDao {
     private static final String USER = "user";
     private static final String USER_ROLE = "user_role";
 
-    private static final String ALL_COLUMNS = "id,first_name,last_name,email,username,password";
     private static final String ALL_COLUMNS_CREATE = "(first_name,last_name,email,username,password)";
     private static final String ALL_COLUMNS_UPDATE = "first_name = ?, last_name= ?, email =?, username = ?, password = ?";
 
@@ -25,32 +24,23 @@ public class UserDaoImpl implements UserDao {
     private static final String STATEMENT_VALUES_USER_ROLE_CREATE = "(?, ?)";
 
     private static final String ID_EQUALS = "id = ?";
-    private static final String USERNAME_EQUALS = "username = ?";
 
     private static final String ALL_COLUMNS_USER_ROLE_CREATE = "(user_id, role_id)";
 
-    private static final String SELECT_ALL_USERS = String.format(CommonQueryScripts.SELECT_ALL, USER);
-    private static final String SELECT_USER_BY_ID = String.format(CommonQueryScripts.SELECT_BY_COLUMN, ALL_COLUMNS, USER, ID_EQUALS);
-    private static final String SELECT_USER_BY_USERNAME = String.format(CommonQueryScripts.SELECT_BY_COLUMN, ALL_COLUMNS, USER, USERNAME_EQUALS);
+    private static final String SELECT_ALL_USERS = "select u.id, u.first_name, u.last_name, u.email, u.username, u.password, r.name as role from user u\n" +
+            "inner join user_role ur on ur.user_id = u.id \n" +
+            "inner join role r on r.id = ur.role_id \n";
+    private static final String SELECT_USER_BY_ID = SELECT_ALL_USERS + " where u.id = ?";
     private static final String INSERT_USER_SQL = String.format(CommonQueryScripts.INSERT, USER, ALL_COLUMNS_CREATE, STATEMENT_VALUES_CREATE);
     private static final String DELETE_USER_BY_ID = String.format(CommonQueryScripts.DELETE_BY_COLUMN, USER, ID_EQUALS);
     private static final String UPDATE_USER = String.format(CommonQueryScripts.UPDATE, USER, ALL_COLUMNS_UPDATE, ID_EQUALS);
 
-    private static final String SELECT_USER_BY_EMAIL_AND_PASSWORD =
-            "select u.id, u.first_name, u.last_name, u.email, u.username, u.password, r.name as role from user u\n" +
-                    "inner join user_role ur on ur.user_id = u.id \n" +
-                    "inner join role r on r.id = ur.role_id \n" +
-                    "where u.username = ? and u.password = ?";
+    private static final String SELECT_USER_BY_USERNAME = SELECT_ALL_USERS + " where u.username = ?";
 
-    private static final String SELECT_USER_BY_USERNAME_1 =
-            "select u.id, u.first_name, u.last_name, u.email, u.username, u.password, r.name as role from user u\n" +
-                    "inner join user_role ur on ur.user_id = u.id \n" +
-                    "inner join role r on r.id = ur.role_id \n" +
-                    "where u.username = ?";
+    private static final String SELECT_USER_BY_USERNAME_AND_PASSWORD = SELECT_USER_BY_USERNAME + " and u.password = ?";
 
     private static final String SELECT_MAX_ID =
             "select max(id) from user";
-
 
     private static final String INSERT_USER_ROLE = String.format(CommonQueryScripts.INSERT, USER_ROLE, ALL_COLUMNS_USER_ROLE_CREATE, STATEMENT_VALUES_USER_ROLE_CREATE);
 
@@ -183,7 +173,7 @@ public class UserDaoImpl implements UserDao {
         User user = null;
 
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_USERNAME_1)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_USERNAME)) {
             preparedStatement.setString(1, username);
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 if (rs.next()) {
@@ -201,7 +191,7 @@ public class UserDaoImpl implements UserDao {
     public User getByUsernameAndPassword(Connection connection, String username, String password) {
         User user = null;
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL_AND_PASSWORD)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_USERNAME_AND_PASSWORD)) {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
 

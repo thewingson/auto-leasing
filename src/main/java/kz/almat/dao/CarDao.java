@@ -7,6 +7,8 @@ import java.sql.SQLException;
 
 public interface CarDao extends CommonDao<Car> {
 
-    boolean rent(Connection connection, Long carId, Long userId) throws SQLException;
+    boolean rent(Connection connection, Long carId, Long userId);
+
+    boolean return_(Connection connection, Long carId, Long userId);
 
 }

@@ -5,17 +5,13 @@ import kz.almat.dao.CarDao;
 import kz.almat.model.Car;
 import kz.almat.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CarDaoImpl implements CarDao {
 
     private static final String CAR = "car";
-    private static final String ALL_COLUMNS = "id,mark,model,registered_number";
     private static final String ALL_COLUMNS_CREATE = "(mark,model,registered_number)";
     private static final String ALL_COLUMNS_UPDATE = "mark = ?, model= ?, registered_number =?";
     private static final String STATEMENT_VALUES_CREATE = "(?, ?, ?)";
@@ -23,16 +19,12 @@ public class CarDaoImpl implements CarDao {
     private static final String ID_EQUALS = "id = ?";
     private static final String RENTOR_EQUALS = "rentor_id =?";
 
-
-    private static final String SELECT_JOIN_USER = "select c.id, c.mark, c.model, c.registered_number, u.id as rentor_id, u.username" +
+    private static final String SELECT_ALL = "select c.id, c.mark, c.model, c.registered_number, u.id as rentor_id, u.username" +
             " from car c " +
             " left join user u on u.id = c.rentor_id";
+    private static final String SELECT_BY_ID = SELECT_ALL + " where c.id = ?";
 
-    private static final String SELECT_BY_ID_JOIN_USER = SELECT_JOIN_USER + " where c.id = ?";
 
-
-    private static final String SELECT_ALL_CARS = String.format(CommonQueryScripts.SELECT_ALL, CAR);
-    private static final String SELECT_CAR_BY_ID = String.format(CommonQueryScripts.SELECT_BY_COLUMN, ALL_COLUMNS, CAR, ID_EQUALS);
     private static final String INSERT_CAR_SQL = String.format(CommonQueryScripts.INSERT, CAR, ALL_COLUMNS_CREATE, STATEMENT_VALUES_CREATE);
     private static final String DELETE_CAR_BY_ID = String.format(CommonQueryScripts.DELETE_BY_COLUMN, CAR, ID_EQUALS);
     private static final String UPDATE_CAR = String.format(CommonQueryScripts.UPDATE, CAR, ALL_COLUMNS_UPDATE, ID_EQUALS);
@@ -45,7 +37,7 @@ public class CarDaoImpl implements CarDao {
     public List<Car> getList(Connection connection)  {
         List<Car> cars = new ArrayList<>();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_JOIN_USER);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL);
              ResultSet rs = preparedStatement.executeQuery()){
             while (rs.next()) {
                 cars.add(build(rs));
@@ -60,7 +52,7 @@ public class CarDaoImpl implements CarDao {
     public Car getById(Connection connection, Long id) {
         Car car = null;
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID_JOIN_USER)){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)){
             preparedStatement.setLong(1, id);
             try (ResultSet rs = preparedStatement.executeQuery()){
                 if (rs.next()) {
@@ -85,7 +77,7 @@ public class CarDaoImpl implements CarDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-       return false;
+        return false;
     }
 
     public boolean update(Connection connection, Long id, Car car) {
@@ -142,6 +134,20 @@ public class CarDaoImpl implements CarDao {
 
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_RENTOR)){
             statement.setLong(1, userId);
+            statement.setLong(2, carId);
+
+            return (1 == statement.executeUpdate());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean return_(Connection connection, Long carId, Long userId){
+
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_RENTOR)){
+            statement.setNull(1, Types.INTEGER);
             statement.setLong(2, carId);
 
             return (1 == statement.executeUpdate());

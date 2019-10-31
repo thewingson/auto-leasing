@@ -74,7 +74,7 @@ public class CarServlet extends HttpServlet {
 
     }
 
-    protected void getOne(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void getOne(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
         CarDTO car = carServiceImpl.getByIdDTO(id);
@@ -85,7 +85,7 @@ public class CarServlet extends HttpServlet {
 
     }
 
-    protected void getList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void getList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         List<CarDTO> cars = carServiceImpl.getAllDTO();
 
@@ -95,7 +95,7 @@ public class CarServlet extends HttpServlet {
 
     }
 
-    protected void create(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void create(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String mark = req.getParameter("mark");
         String model = req.getParameter("model");
@@ -108,7 +108,7 @@ public class CarServlet extends HttpServlet {
 
     }
 
-    protected void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Long.parseLong(req.getParameter("id"));
 
         carServiceImpl.delete(id);
@@ -116,7 +116,7 @@ public class CarServlet extends HttpServlet {
         getList(req, resp);
     }
 
-    protected void update(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void update(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
 
@@ -127,7 +127,7 @@ public class CarServlet extends HttpServlet {
 
     }
 
-    protected void updateDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void updateDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
 
@@ -143,7 +143,7 @@ public class CarServlet extends HttpServlet {
 
     }
 
-    protected void rent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void rent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
         HttpSession session = req.getSession();

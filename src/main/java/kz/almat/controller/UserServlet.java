@@ -70,7 +70,7 @@ public class UserServlet extends HttpServlet {
 
     }
 
-    protected void getOne(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void getOne(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
         User user = userServiceimpl.getById(id);
@@ -80,7 +80,7 @@ public class UserServlet extends HttpServlet {
 
     }
 
-    protected void getList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void getList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         List<User> users = userServiceimpl.getAll();
         req.setAttribute("users", users);
@@ -89,7 +89,7 @@ public class UserServlet extends HttpServlet {
 
     }
 
-    protected void create(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void create(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String firstName = req.getParameter("firstName");
         String lastName = req.getParameter("lastName");
@@ -103,7 +103,7 @@ public class UserServlet extends HttpServlet {
 
     }
 
-    protected void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Long.parseLong(req.getParameter("id"));
 
         userServiceimpl.delete(id);
@@ -111,7 +111,7 @@ public class UserServlet extends HttpServlet {
         getList(req, resp);
     }
 
-    protected void update(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void update(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
 
@@ -121,7 +121,7 @@ public class UserServlet extends HttpServlet {
 
     }
 
-    protected void updateDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void updateDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
 

@@ -68,21 +68,21 @@ public class AuthServlet extends HttpServlet {
 
     }
 
-    protected void signIn(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void signIn(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         RequestDispatcher dispatcher = req.getRequestDispatcher("auth/sign-in.jsp");
         dispatcher.forward(req, resp);
 
     }
 
-    protected void signUp(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void signUp(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         RequestDispatcher dispatcher = req.getRequestDispatcher("auth/sign-up.jsp");
         dispatcher.forward(req, resp);
 
     }
 
-    protected void signOutDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void signOutDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
         String username = (String) session.getAttribute(CommonViewParameters.USERNAME);
 
@@ -94,7 +94,7 @@ public class AuthServlet extends HttpServlet {
 
     }
 
-    protected void signUpDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void signUpDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String firstName = req.getParameter("firstName");
         String lastName = req.getParameter("lastName");
@@ -119,7 +119,7 @@ public class AuthServlet extends HttpServlet {
 
     }
 
-    protected void signInDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void signInDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String username = req.getParameter(CommonViewParameters.USERNAME);
         String password = req.getParameter(CommonViewParameters.PASSWORD);

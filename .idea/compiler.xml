@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="auto-leasing" target="1.5" />
+      <module name="auto-leasing" target="7" />
     </bytecodeTargetLevel>
   </component>
 </project>

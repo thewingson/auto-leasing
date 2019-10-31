@@ -15,8 +15,6 @@ import java.util.List;
 
 public class CarServiceImpl implements CarService {
 
-    private Connection connection;
-
     private CarDaoImpl carDaoImpl;
 
     private UserDaoImpl userDaoImpl;
@@ -26,106 +24,124 @@ public class CarServiceImpl implements CarService {
         this.userDaoImpl = new UserDaoImpl();
     }
 
-    public List<Car> getAll() throws SQLException {
+    public List<Car> getAll() {
+        List<Car> cars = null;
 
-        connection = HikariConnectionPool.getConnection();
-        List<Car> cars = carDaoImpl.getList(connection);
-        connection.close();
-
-//        try {
-//            connection = HikariConnectionPool.getConnection();
-//            cars = carDaoImpl.getList(connection);
-//        } finally {
-//            if (connection != null) {
-//                connection.close();
-//            }
-//        }
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            cars = carDaoImpl.getList(connection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return cars;
     }
 
-    public List<CarDTO> getAllDTO() throws SQLException {
+    public List<CarDTO> getAllDTO() {
 
-        connection = HikariConnectionPool.getConnection();
-        List<Car> cars = carDaoImpl.getList(connection);
-        connection.close();
+        List<Car> cars = null;
 
-//        try {
-//            connection = HikariConnectionPool.getConnection();
-//            cars = carDaoImpl.getList(connection);
-//        } finally {
-//            if (connection != null) {
-//                connection.close();
-//            }
-//        }
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            cars = carDaoImpl.getList(connection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        List<CarDTO> carDTOS = new ArrayList<CarDTO>();
+        List<CarDTO> carDTOS = new ArrayList<>();
 
-        for (Car c : cars){
-            CarDTO carDTO = new CarDTO(c.getId(), c.getMark(), c.getModel(), c.getRegisteredNumber(), c.getRentor().getId());
-            carDTOS.add(carDTO);
+        if(cars != null){
+            for (Car c : cars) {
+                CarDTO carDTO = new CarDTO(c.getId(), c.getMark(), c.getModel(), c.getRegisteredNumber(), c.getRentor().getId());
+                carDTOS.add(carDTO);
+            }
         }
 
         return carDTOS;
+
     }
 
-    public Car getById(Long carId) throws SQLException {
-        connection = HikariConnectionPool.getConnection();
-        Car car = carDaoImpl.getById(connection, carId);
-        connection.close();
+    public Car getById(Long carId) {
 
-        return car;
-    }
-
-    public CarDTO getByIdDTO(Long carId) throws SQLException {
-        connection = HikariConnectionPool.getConnection();
-        Car car = carDaoImpl.getById(connection, carId);
-        connection.close();
-
-        return new CarDTO(car.getId(), car.getMark(), car.getModel(), car.getRegisteredNumber(), car.getRentor().getId());
-    }
-
-    public void create(Car car) throws SQLException {
-
-        connection = HikariConnectionPool.getConnection();
-        if (carDaoImpl.create(connection, car)) {
-            connection.commit();
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            return carDaoImpl.getById(connection, carId);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        connection.close();
+        return null;
     }
 
-    public void update(Long id, Car car) throws SQLException {
-
-        connection = HikariConnectionPool.getConnection();
-
-        if (carDaoImpl.update(connection, id, car)) {
-            connection.commit();
+    public CarDTO getByIdDTO(Long carId) {
+        Car car = null;
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            car = carDaoImpl.getById(connection, carId);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        connection.close();
+        if (car != null){
+            return new CarDTO(car.getId(), car.getMark(), car.getModel(), car.getRegisteredNumber(), car.getRentor().getId());
+        } else {
+            return null;
+        }
 
     }
 
-    public void delete(Long id) throws SQLException {
-        connection = HikariConnectionPool.getConnection();
+    public void create(Car car) {
 
-        if (carDaoImpl.delete(connection, id)) {
-            connection.commit();
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            if (carDaoImpl.create(connection, car)) {
+                connection.commit();
+            } else {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        connection.close();
     }
 
-    public void rent(Long carId, String username) throws SQLException {
-        connection = HikariConnectionPool.getConnection();
+    public void update(Long id, Car car) {
 
-        User user = userDaoImpl.getByUsername(connection, username);
-
-        if (carDaoImpl.rent(connection, carId, user.getId())) {
-            connection.commit();
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            if (carDaoImpl.update(connection, id, car)) {
+                connection.commit();
+            } else {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        connection.close();
+    }
+
+    public void delete(Long id) {
+
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            if (carDaoImpl.delete(connection, id)) {
+                connection.commit();
+            } else {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void rent(Long carId, String username) {
+
+
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            User user = userDaoImpl.getByUsername(connection, username);
+
+            if (carDaoImpl.rent(connection, carId, user.getId())) {
+                connection.commit();
+            } else {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -42,57 +42,78 @@ public class CarDaoImpl implements CarDao {
     public CarDaoImpl() {
     }
 
-    public List<Car> getList(Connection connection) throws SQLException {
-        List<Car> cars = new ArrayList<Car>();
+    public List<Car> getList(Connection connection)  {
+        List<Car> cars = new ArrayList<>();
 
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_JOIN_USER);
-        ResultSet rs = preparedStatement.executeQuery();
-
-        while (rs.next()) {
-            cars.add(build(rs));
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_JOIN_USER);
+             ResultSet rs = preparedStatement.executeQuery()){
+            while (rs.next()) {
+                cars.add(build(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return cars;
     }
 
-    public Car getById(Connection connection, Long id) throws SQLException {
+    public Car getById(Connection connection, Long id) {
         Car car = null;
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID_JOIN_USER);
-        preparedStatement.setLong(1, id);
-        ResultSet rs = preparedStatement.executeQuery();
 
-        if (rs.next()) {
-            car = build(rs);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID_JOIN_USER)){
+            preparedStatement.setLong(1, id);
+            try (ResultSet rs = preparedStatement.executeQuery()){
+                if (rs.next()) {
+                    car = build(rs);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return car;
     }
 
-    public boolean create(Connection connection, Car car) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(INSERT_CAR_SQL);
-        statement.setString(1, car.getMark());
-        statement.setString(2, car.getModel());
-        statement.setString(3, car.getRegisteredNumber());
+    public boolean create(Connection connection, Car car) {
 
-        return (1 == statement.executeUpdate());
+        try (PreparedStatement statement = connection.prepareStatement(INSERT_CAR_SQL)){
+            statement.setString(1, car.getMark());
+            statement.setString(2, car.getModel());
+            statement.setString(3, car.getRegisteredNumber());
+
+            return (1 == statement.executeUpdate());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+       return false;
     }
 
-    public boolean update(Connection connection, Long id, Car car) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(UPDATE_CAR);
-        statement.setString(1, car.getMark());
-        statement.setString(2, car.getModel());
-        statement.setString(3, car.getRegisteredNumber());
-        statement.setLong(4, id);
+    public boolean update(Connection connection, Long id, Car car) {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_CAR)){
+            statement.setString(1, car.getMark());
+            statement.setString(2, car.getModel());
+            statement.setString(3, car.getRegisteredNumber());
+            statement.setLong(4, id);
 
-        return (1 == statement.executeUpdate());
+            return (1 == statement.executeUpdate());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
-    public boolean delete(Connection connection, Long id) throws SQLException {
+    public boolean delete(Connection connection, Long id) {
 
-        PreparedStatement statement = connection.prepareStatement(DELETE_CAR_BY_ID);
-        statement.setLong(1, id);
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_CAR_BY_ID)){
+            statement.setLong(1, id);
 
-        return (1 == statement.executeUpdate());
+            return (1 == statement.executeUpdate());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     private Car build(ResultSet rs) {
@@ -117,11 +138,17 @@ public class CarDaoImpl implements CarDao {
         return new Car(carId, mark, model, registeredNumber, new User(rentor_id, null, null, null, username, null));
     }
 
-    public boolean rent(Connection connection, Long carId, Long userId) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(UPDATE_RENTOR);
-        statement.setLong(1, userId);
-        statement.setLong(2, carId);
+    public boolean rent(Connection connection, Long carId, Long userId) {
 
-        return (1 == statement.executeUpdate());
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_RENTOR)){
+            statement.setLong(1, userId);
+            statement.setLong(2, carId);
+
+            return (1 == statement.executeUpdate());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

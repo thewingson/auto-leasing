@@ -64,12 +64,8 @@ public class CarServlet extends HttpServlet {
     protected void getOne(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
-        CarDTO car = null;
-        try {
-            car = carServiceImpl.getByIdDTO(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        CarDTO car = carServiceImpl.getByIdDTO(id);
+
         req.setAttribute("car", car);
         RequestDispatcher dispatcher = req.getRequestDispatcher("car/car.jsp");
         dispatcher.forward(req, resp);
@@ -78,12 +74,7 @@ public class CarServlet extends HttpServlet {
 
     protected void getList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        List<CarDTO> cars = null;
-        try {
-            cars = carServiceImpl.getAllDTO();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        List<CarDTO> cars = carServiceImpl.getAllDTO();
 
         req.setAttribute("cars", cars);
         RequestDispatcher dispatcher = req.getRequestDispatcher("car/cars.jsp");
@@ -98,11 +89,7 @@ public class CarServlet extends HttpServlet {
         String registeredNumber = req.getParameter("registeredNumber");
 
         Car car = new Car(null, mark, model, registeredNumber);
-        try {
-            carServiceImpl.create(car);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        carServiceImpl.create(car);
 
         getList(req, resp);
 
@@ -111,11 +98,7 @@ public class CarServlet extends HttpServlet {
     protected void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Long.parseLong(req.getParameter("id"));
 
-        try {
-            carServiceImpl.delete(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        carServiceImpl.delete(id);
 
         getList(req, resp);
     }
@@ -124,12 +107,8 @@ public class CarServlet extends HttpServlet {
 
         Long id = Long.parseLong(req.getParameter("id"));
 
-        Car carToUpdate = null;
-        try {
-            carToUpdate = carServiceImpl.getById(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Car carToUpdate = carServiceImpl.getById(id);
+
         req.setAttribute("car", carToUpdate);
         req.getRequestDispatcher("car/update.jsp").forward(req, resp);
 
@@ -145,11 +124,7 @@ public class CarServlet extends HttpServlet {
 
         Car carToUpdate = new Car(id, mark, model, registeredNumber);
 
-        try {
-            carServiceImpl.update(id, carToUpdate);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        carServiceImpl.update(id, carToUpdate);
 
         getList(req, resp);
 
@@ -161,11 +136,7 @@ public class CarServlet extends HttpServlet {
         HttpSession session = req.getSession();
         String username = (String) session.getAttribute("username");
 
-        try {
-            carServiceImpl.rent(id, username);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        carServiceImpl.rent(id, username);
 
         getList(req, resp);
 

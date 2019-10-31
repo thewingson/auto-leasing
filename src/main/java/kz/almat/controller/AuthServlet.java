@@ -33,8 +33,6 @@ public class AuthServlet extends HttpServlet {
                 signUpDo(req, resp);
             } else if (method.equals("signIn")) {
                 signInDo(req, resp);
-            } else if (method.equals("signOut")) {
-                signOutDo(req, resp);
             }
         }
 
@@ -78,11 +76,8 @@ public class AuthServlet extends HttpServlet {
         HttpSession session = req.getSession();
         String username = (String) session.getAttribute(CommonViewParameters.USERNAME);
 
-        // TODO: session.invalidate() is used for this purpose
         if (username != null) {
-            session.removeAttribute(CommonViewParameters.USERNAME);
-            session.removeAttribute(CommonViewParameters.PASSWORD);
-            session.removeAttribute(CommonViewParameters.ROLE);
+            session.invalidate();
         }
 
         signIn(req, resp);
@@ -126,6 +121,7 @@ public class AuthServlet extends HttpServlet {
         if (userToValidate != null) {
             session.setAttribute(CommonViewParameters.USERNAME, username);
             session.setAttribute(CommonViewParameters.PASSWORD, password);
+            session.setAttribute(CommonViewParameters.ID, userToValidate.getId());
             session.setAttribute(CommonViewParameters.ROLE, userToValidate.getRole().toString());
 
             resp.sendRedirect("car");

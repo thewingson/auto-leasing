@@ -16,6 +16,17 @@
 <c:set var="role" value="${sessionScope.role}"/>
 <c:set var="cars" value="${requestScope.cars}"/>
 
+<ul>
+    <c:if test="${sessionScope.username == null}">
+        <li><a class="button" href="/auth?method=signIn">Sign In</a></li>
+        <li><a class="button" href="/auth?method=signUp">Sign Up</a></li>
+    </c:if>
+    <c:if test="${sessionScope.username != null}">
+        <li><a class="button" href="/auth?method=signOut">Sign Out</a></li>
+    </c:if>
+
+</ul>
+
 <form action="car" method="POST">
     Mark: <input type="text" name="mark">
     <br/>

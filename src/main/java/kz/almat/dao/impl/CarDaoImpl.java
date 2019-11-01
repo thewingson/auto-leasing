@@ -4,12 +4,15 @@ import kz.almat.constant.CommonQueryScripts;
 import kz.almat.dao.CarDao;
 import kz.almat.model.Car;
 import kz.almat.model.User;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CarDaoImpl implements CarDao {
+
+    private static final Logger log = Logger.getLogger(CarDaoImpl.class);
 
     private static final String CAR = "car";
     private static final String ALL_COLUMNS_CREATE = "(mark,model,registered_number)";
@@ -43,7 +46,7 @@ public class CarDaoImpl implements CarDao {
                 cars.add(build(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return cars;
@@ -60,7 +63,7 @@ public class CarDaoImpl implements CarDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return car;
@@ -75,7 +78,7 @@ public class CarDaoImpl implements CarDao {
 
             return (1 == statement.executeUpdate());
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return false;
     }
@@ -89,7 +92,7 @@ public class CarDaoImpl implements CarDao {
 
             return (1 == statement.executeUpdate());
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return false;
@@ -102,7 +105,7 @@ public class CarDaoImpl implements CarDao {
 
             return (1 == statement.executeUpdate());
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return false;
@@ -124,7 +127,7 @@ public class CarDaoImpl implements CarDao {
             rentor_id = rs.getLong("rentor_id");
             username = rs.getString("username");
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return new Car(carId, mark, model, registeredNumber, new User(rentor_id, null, null, null, username, null));
@@ -138,7 +141,7 @@ public class CarDaoImpl implements CarDao {
 
             return (1 == statement.executeUpdate());
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return false;
@@ -152,7 +155,7 @@ public class CarDaoImpl implements CarDao {
 
             return (1 == statement.executeUpdate());
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return false;

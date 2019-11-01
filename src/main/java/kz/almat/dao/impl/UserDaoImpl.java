@@ -4,6 +4,7 @@ import kz.almat.constant.CommonQueryScripts;
 import kz.almat.dao.UserDao;
 import kz.almat.model.Role;
 import kz.almat.model.User;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
+
+    private static final Logger log = Logger.getLogger(UserDaoImpl.class);
 
     private static final String USER = "user";
     private static final String USER_ROLE = "user_role";
@@ -54,7 +57,7 @@ public class UserDaoImpl implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return users;
@@ -72,7 +75,7 @@ public class UserDaoImpl implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return user;
@@ -90,7 +93,7 @@ public class UserDaoImpl implements UserDao {
             statement.execute();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         int max = -1;
@@ -101,7 +104,7 @@ public class UserDaoImpl implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         try (PreparedStatement statement = connection.prepareStatement(INSERT_USER_ROLE)) {
@@ -109,7 +112,7 @@ public class UserDaoImpl implements UserDao {
             statement.setLong(2, 2);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return true;
@@ -127,7 +130,7 @@ public class UserDaoImpl implements UserDao {
 
             return (1 == statement.executeUpdate());
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return false;
     }
@@ -139,7 +142,7 @@ public class UserDaoImpl implements UserDao {
 
             return (1 == statement.executeUpdate());
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return false;
@@ -163,7 +166,7 @@ public class UserDaoImpl implements UserDao {
             password = rs.getString("password");
             role = rs.getString("role");
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return new User(userId, firstName, lastName, email, username, password, Role.valueOf(role));
@@ -181,7 +184,7 @@ public class UserDaoImpl implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return user;
@@ -201,7 +204,7 @@ public class UserDaoImpl implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return user;

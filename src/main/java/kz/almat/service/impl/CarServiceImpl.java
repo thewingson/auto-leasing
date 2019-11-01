@@ -7,6 +7,7 @@ import kz.almat.model.User;
 import kz.almat.model.dto.CarDTO;
 import kz.almat.service.CarService;
 import kz.almat.util.HikariConnectionPool;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CarServiceImpl implements CarService {
+
+    private static final Logger log = Logger.getLogger(CarServiceImpl.class);
 
     private CarDaoImpl carDaoImpl;
 
@@ -31,7 +34,7 @@ public class CarServiceImpl implements CarService {
         try (Connection connection = HikariConnectionPool.getConnection()) {
             cars = carDaoImpl.getList(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return cars;
@@ -45,7 +48,7 @@ public class CarServiceImpl implements CarService {
         try (Connection connection = HikariConnectionPool.getConnection()) {
             cars = carDaoImpl.getList(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         List<CarDTO> carDTOS = new ArrayList<>();
@@ -67,7 +70,7 @@ public class CarServiceImpl implements CarService {
         try (Connection connection = HikariConnectionPool.getConnection()) {
             return carDaoImpl.getById(connection, carId);
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return null;
@@ -79,7 +82,7 @@ public class CarServiceImpl implements CarService {
         try (Connection connection = HikariConnectionPool.getConnection()) {
             car = carDaoImpl.getById(connection, carId);
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         if (car != null){
@@ -100,7 +103,7 @@ public class CarServiceImpl implements CarService {
                 connection.rollback();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
     }
@@ -115,7 +118,7 @@ public class CarServiceImpl implements CarService {
                 connection.rollback();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
     }
@@ -130,7 +133,7 @@ public class CarServiceImpl implements CarService {
                 connection.rollback();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
     }
@@ -148,7 +151,7 @@ public class CarServiceImpl implements CarService {
                 connection.rollback();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
     }
@@ -164,7 +167,7 @@ public class CarServiceImpl implements CarService {
                 connection.rollback();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
     }

@@ -6,7 +6,7 @@ public final class CommonViewParameters {
 
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
-    public static final String ID = "id";
+    public static final String ID = "user_id";
     public static final String ROLE = "role";
 
 

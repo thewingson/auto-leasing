@@ -24,6 +24,7 @@ public class CarServiceImpl implements CarService {
         this.userDaoImpl = new UserDaoImpl();
     }
 
+    @Override
     public List<Car> getAll() {
         List<Car> cars = null;
 
@@ -36,6 +37,7 @@ public class CarServiceImpl implements CarService {
         return cars;
     }
 
+    @Override
     public List<CarDTO> getAllDTO() {
 
         List<Car> cars = null;
@@ -59,6 +61,7 @@ public class CarServiceImpl implements CarService {
 
     }
 
+    @Override
     public Car getById(Long carId) {
 
         try (Connection connection = HikariConnectionPool.getConnection()) {
@@ -70,6 +73,7 @@ public class CarServiceImpl implements CarService {
         return null;
     }
 
+    @Override
     public CarDTO getByIdDTO(Long carId) {
         Car car = null;
         try (Connection connection = HikariConnectionPool.getConnection()) {
@@ -86,6 +90,7 @@ public class CarServiceImpl implements CarService {
 
     }
 
+    @Override
     public void create(Car car) {
 
         try (Connection connection = HikariConnectionPool.getConnection()) {
@@ -100,6 +105,7 @@ public class CarServiceImpl implements CarService {
 
     }
 
+    @Override
     public void update(Long id, Car car) {
 
         try (Connection connection = HikariConnectionPool.getConnection()) {
@@ -114,6 +120,7 @@ public class CarServiceImpl implements CarService {
 
     }
 
+    @Override
     public void delete(Long id) {
 
         try (Connection connection = HikariConnectionPool.getConnection()) {
@@ -128,6 +135,7 @@ public class CarServiceImpl implements CarService {
 
     }
 
+    @Override
     public void rent(Long carId, String username) {
 
 
@@ -135,6 +143,22 @@ public class CarServiceImpl implements CarService {
             User user = userDaoImpl.getByUsername(connection, username);
 
             if (carDaoImpl.rent(connection, carId, user.getId())) {
+                connection.commit();
+            } else {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void returnBack(Long carId, Long userId) {
+
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+
+            if (carDaoImpl.returnBack(connection, carId, userId)) {
                 connection.commit();
             } else {
                 connection.rollback();

@@ -144,7 +144,7 @@ public class CarDaoImpl implements CarDao {
         return false;
     }
 
-    public boolean return_(Connection connection, Long carId, Long userId){
+    public boolean returnBack(Connection connection, Long carId, Long userId){
 
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_RENTOR)){
             statement.setNull(1, Types.INTEGER);

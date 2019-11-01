@@ -67,6 +67,9 @@ public class CarServlet extends HttpServlet {
             case "rent":
                 rent(req, resp);
                 break;
+            case "returnBack":
+                returnBack(req, resp);
+                break;
             default:
                 getList(req, resp);
                 break;
@@ -150,6 +153,18 @@ public class CarServlet extends HttpServlet {
         String username = (String) session.getAttribute("username");
 
         carServiceImpl.rent(id, username);
+
+        getList(req, resp);
+
+    }
+
+    private void returnBack(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        Long id = Long.parseLong(req.getParameter("id"));
+        HttpSession session = req.getSession();
+        Long userId = (Long) session.getAttribute("user_id");
+
+        carServiceImpl.returnBack(id, userId);
 
         getList(req, resp);
 

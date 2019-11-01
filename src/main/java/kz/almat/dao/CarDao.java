@@ -9,6 +9,6 @@ public interface CarDao extends CommonDao<Car> {
 
     boolean rent(Connection connection, Long carId, Long userId);
 
-    boolean return_(Connection connection, Long carId, Long userId);
+    boolean returnBack(Connection connection, Long carId, Long userId);
 
 }

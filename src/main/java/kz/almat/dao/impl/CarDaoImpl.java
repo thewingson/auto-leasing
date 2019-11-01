@@ -102,13 +102,13 @@ public class CarDaoImpl implements CarDao {
 
         try (PreparedStatement statement = connection.prepareStatement(DELETE_CAR_BY_ID)){
             statement.setLong(1, id);
-
-            return (1 == statement.executeUpdate());
+            statement.executeUpdate();
         } catch (SQLException e) {
             log.error(e.getMessage());
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     private Car build(ResultSet rs) {

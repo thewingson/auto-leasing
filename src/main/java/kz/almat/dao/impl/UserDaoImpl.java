@@ -24,9 +24,10 @@ public class UserDaoImpl implements UserDao {
     private static final String ALL_COLUMNS_UPDATE = "first_name = ?, last_name= ?, email =?, username = ?, password = ?";
 
     private static final String STATEMENT_VALUES_CREATE = "(?, ?, ?, ?, ?)";
-    private static final String STATEMENT_VALUES_USER_ROLE_CREATE = "(?, ?)";
 
     private static final String ID_EQUALS = "id = ?";
+
+    private static final String USER_ID_EQUALS = "user_id = ?";
 
     private static final String ALL_COLUMNS_USER_ROLE_CREATE = "(user_id, role_id)";
 
@@ -38,12 +39,15 @@ public class UserDaoImpl implements UserDao {
     private static final String DELETE_USER_BY_ID = String.format(CommonQueryScripts.DELETE_BY_COLUMN, USER, ID_EQUALS);
     private static final String UPDATE_USER = String.format(CommonQueryScripts.UPDATE, USER, ALL_COLUMNS_UPDATE, ID_EQUALS);
 
+    private static final String DELETE_USER_ROLE_BY_USER_ID = String.format(CommonQueryScripts.DELETE_BY_COLUMN, USER_ROLE, USER_ID_EQUALS);
+
     private static final String SELECT_USER_BY_USERNAME = SELECT_ALL_USERS + " where u.username = ?";
 
     private static final String SELECT_USER_BY_USERNAME_AND_PASSWORD = SELECT_USER_BY_USERNAME + " and u.password = ?";
 
     private static final String SELECT_MAX_ID =
-            "select max(id) from user";
+            "(select max(id) from user)";
+    private static final String STATEMENT_VALUES_USER_ROLE_CREATE = "(" + SELECT_MAX_ID + ", ?)";
 
     private static final String INSERT_USER_ROLE = String.format(CommonQueryScripts.INSERT, USER_ROLE, ALL_COLUMNS_USER_ROLE_CREATE, STATEMENT_VALUES_USER_ROLE_CREATE);
 
@@ -94,25 +98,15 @@ public class UserDaoImpl implements UserDao {
 
         } catch (SQLException e) {
             log.error(e.getMessage());
-        }
-
-        int max = -1;
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_MAX_ID)) {
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    max = rs.getInt("max");
-                }
-            }
-        } catch (SQLException e) {
-            log.error(e.getMessage());
+            return false;
         }
 
         try (PreparedStatement statement = connection.prepareStatement(INSERT_USER_ROLE)) {
-            statement.setLong(1, max);
-            statement.setLong(2, 2);
+            statement.setLong(1, 2);
             statement.executeUpdate();
         } catch (SQLException e) {
             log.error(e.getMessage());
+            return false;
         }
 
         return true;
@@ -137,15 +131,20 @@ public class UserDaoImpl implements UserDao {
 
     public boolean delete(Connection connection, Long id) {
 
-        try (PreparedStatement statement = connection.prepareStatement(DELETE_USER_BY_ID)) {
-            statement.setLong(1, id);
+        if (!deleteQuery(connection, id, DELETE_USER_ROLE_BY_USER_ID)) return false;
 
-            return (1 == statement.executeUpdate());
+        return deleteQuery(connection, id, DELETE_USER_BY_ID);
+    }
+
+    private boolean deleteQuery(Connection connection, Long id, String searchId) {
+        try (PreparedStatement statement = connection.prepareStatement(searchId)) {
+            statement.setLong(1, id);
+            statement.executeUpdate();
         } catch (SQLException e) {
             log.error(e.getMessage());
+            return false;
         }
-
-        return false;
+        return true;
     }
 
     private User build(ResultSet rs) {

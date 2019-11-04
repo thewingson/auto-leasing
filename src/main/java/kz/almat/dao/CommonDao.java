@@ -1,7 +1,6 @@
 package kz.almat.dao;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public interface CommonDao<E> {
@@ -15,5 +14,6 @@ public interface CommonDao<E> {
     boolean update(Connection connection, Long id, E entity);
 
     boolean delete(Connection connection, Long id);
+
 
 }

@@ -54,11 +54,10 @@ public class UserDaoImpl implements UserDao {
     public List<User> getList(Connection connection) {
         List<User> users = new ArrayList<>();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS)) {
-            try (ResultSet rs = preparedStatement.executeQuery()) {
-                while (rs.next()) {
-                    users.add(build(rs));
-                }
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);
+             ResultSet rs = preparedStatement.executeQuery()) {
+            while (rs.next()) {
+                users.add(build(rs));
             }
         } catch (SQLException e) {
             log.error(e.getMessage());

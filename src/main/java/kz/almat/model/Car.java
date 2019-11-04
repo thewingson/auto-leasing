@@ -7,8 +7,6 @@ public class Car {
     private String model;
     private String registeredNumber;
 
-    private User rentor;
-
     public Car() {
     }
 
@@ -17,14 +15,6 @@ public class Car {
         this.mark = mark;
         this.model = model;
         this.registeredNumber = registeredNumber;
-    }
-
-    public Car(Long id, String mark, String model, String registeredNumber, User user) {
-        this.id = id;
-        this.mark = mark;
-        this.model = model;
-        this.registeredNumber = registeredNumber;
-        this.rentor = user;
     }
 
     public Long getId() {
@@ -57,13 +47,5 @@ public class Car {
 
     public void setRegisteredNumber(String registeredNumber) {
         this.registeredNumber = registeredNumber;
-    }
-
-    public User getRentor() {
-        return rentor;
-    }
-
-    public void setRentor(User rentor) {
-        this.rentor = rentor;
     }
 }

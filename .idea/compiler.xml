@@ -9,8 +9,8 @@
         <module name="auto-leasing" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="auto-leasing" target="7" />
+    <bytecodeTargetLevel target="8">
+      <module name="auto-leasing" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

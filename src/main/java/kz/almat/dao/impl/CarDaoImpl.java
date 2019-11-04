@@ -3,7 +3,6 @@ package kz.almat.dao.impl;
 import kz.almat.constant.CommonQueryScripts;
 import kz.almat.dao.CarDao;
 import kz.almat.model.Car;
-import kz.almat.model.User;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -22,10 +21,11 @@ public class CarDaoImpl implements CarDao {
     private static final String ID_EQUALS = "id = ?";
     private static final String RENTOR_EQUALS = "rentor_id =?";
 
-    private static final String SELECT_ALL = "select c.id, c.mark, c.model, c.registered_number, u.id as rentor_id, u.username" +
+    private static final String SELECT_ALL = "select c.id, c.mark, c.model, c.registered_number " +
             " from car c " +
-            " left join user u on u.id = c.rentor_id";
-    private static final String SELECT_BY_ID = SELECT_ALL + " where c.id = ?";
+            " left join agreement a on a.car_id = c.id " +
+            " where a.car_id is null";
+    private static final String SELECT_BY_ID = SELECT_ALL + " and c.id = ?";
 
 
     private static final String INSERT_CAR_SQL = String.format(CommonQueryScripts.INSERT, CAR, ALL_COLUMNS_CREATE, STATEMENT_VALUES_CREATE);
@@ -37,11 +37,11 @@ public class CarDaoImpl implements CarDao {
     public CarDaoImpl() {
     }
 
-    public List<Car> getList(Connection connection)  {
+    public List<Car> getList(Connection connection) {
         List<Car> cars = new ArrayList<>();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL);
-             ResultSet rs = preparedStatement.executeQuery()){
+             ResultSet rs = preparedStatement.executeQuery()) {
             while (rs.next()) {
                 cars.add(build(rs));
             }
@@ -55,9 +55,9 @@ public class CarDaoImpl implements CarDao {
     public Car getById(Connection connection, Long id) {
         Car car = null;
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)) {
             preparedStatement.setLong(1, id);
-            try (ResultSet rs = preparedStatement.executeQuery()){
+            try (ResultSet rs = preparedStatement.executeQuery()) {
                 if (rs.next()) {
                     car = build(rs);
                 }
@@ -71,7 +71,7 @@ public class CarDaoImpl implements CarDao {
 
     public boolean create(Connection connection, Car car) {
 
-        try (PreparedStatement statement = connection.prepareStatement(INSERT_CAR_SQL)){
+        try (PreparedStatement statement = connection.prepareStatement(INSERT_CAR_SQL)) {
             statement.setString(1, car.getMark());
             statement.setString(2, car.getModel());
             statement.setString(3, car.getRegisteredNumber());
@@ -84,7 +84,7 @@ public class CarDaoImpl implements CarDao {
     }
 
     public boolean update(Connection connection, Long id, Car car) {
-        try (PreparedStatement statement = connection.prepareStatement(UPDATE_CAR)){
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_CAR)) {
             statement.setString(1, car.getMark());
             statement.setString(2, car.getModel());
             statement.setString(3, car.getRegisteredNumber());
@@ -100,7 +100,7 @@ public class CarDaoImpl implements CarDao {
 
     public boolean delete(Connection connection, Long id) {
 
-        try (PreparedStatement statement = connection.prepareStatement(DELETE_CAR_BY_ID)){
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_CAR_BY_ID)) {
             statement.setLong(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -116,40 +116,22 @@ public class CarDaoImpl implements CarDao {
         String mark = null;
         String model = null;
         String registeredNumber = null;
-        Long rentor_id = null;
-        String username = null;
 
         try {
             carId = rs.getLong("id");
             mark = rs.getString("mark");
             model = rs.getString("model");
             registeredNumber = rs.getString("registered_number");
-            rentor_id = rs.getLong("rentor_id");
-            username = rs.getString("username");
         } catch (SQLException e) {
             log.error(e.getMessage());
         }
 
-        return new Car(carId, mark, model, registeredNumber, new User(rentor_id, null, null, null, username, null));
+        return new Car(carId, mark, model, registeredNumber);
     }
 
-    public boolean rent(Connection connection, Long carId, Long userId) {
+    public boolean returnBack(Connection connection, Long carId, Long userId) {
 
-        try (PreparedStatement statement = connection.prepareStatement(UPDATE_RENTOR)){
-            statement.setLong(1, userId);
-            statement.setLong(2, carId);
-
-            return (1 == statement.executeUpdate());
-        } catch (SQLException e) {
-            log.error(e.getMessage());
-        }
-
-        return false;
-    }
-
-    public boolean returnBack(Connection connection, Long carId, Long userId){
-
-        try (PreparedStatement statement = connection.prepareStatement(UPDATE_RENTOR)){
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_RENTOR)) {
             statement.setNull(1, Types.INTEGER);
             statement.setLong(2, carId);
 

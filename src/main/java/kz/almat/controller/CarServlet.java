@@ -1,7 +1,9 @@
 package kz.almat.controller;
 
 
+import kz.almat.model.Agreement;
 import kz.almat.model.Car;
+import kz.almat.model.User;
 import kz.almat.model.dto.CarDTO;
 import kz.almat.service.impl.CarServiceImpl;
 
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
 
 public class CarServlet extends HttpServlet {
@@ -39,6 +42,9 @@ public class CarServlet extends HttpServlet {
                 break;
             case "create":
                 create(req, resp);
+                break;
+            case "rent":
+                rentDo(req, resp);
                 break;
         }
 
@@ -90,7 +96,7 @@ public class CarServlet extends HttpServlet {
 
     private void getList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        List<CarDTO> cars = carServiceImpl.getAllDTO();
+        List<Car> cars = carServiceImpl.getAll();
 
         req.setAttribute("cars", cars);
         RequestDispatcher dispatcher = req.getRequestDispatcher("car/cars.jsp");
@@ -149,14 +155,36 @@ public class CarServlet extends HttpServlet {
     private void rent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
-        HttpSession session = req.getSession();
-        String username = (String) session.getAttribute("username");
 
-        carServiceImpl.rent(id, username);
+        Car carToRent = carServiceImpl.getById(id);
+
+        req.setAttribute("car", carToRent);
+        req.getRequestDispatcher("car/rent.jsp").forward(req, resp);
+
+    }
+
+    private void rentDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        HttpSession session = req.getSession();
+
+        Long car_id = Long.parseLong(req.getParameter("id"));
+        Long user_id = (Long) session.getAttribute("user_id");
+
+        String driverLicense = req.getParameter("driverLicense");
+        Timestamp startDate = Timestamp.valueOf(req.getParameter("startDate"));
+        Timestamp endDate = Timestamp.valueOf(req.getParameter("endDate"));
+
+        User user = new User(user_id, null, null, null, null, null);
+        Car car = new Car(car_id, null, null,null);
+
+        Agreement agreement = new Agreement(null, user, car, startDate, endDate);
+
+        carServiceImpl.rent(agreement, driverLicense);
 
         getList(req, resp);
 
     }
+
 
     private void returnBack(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

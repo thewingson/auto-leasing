@@ -45,7 +45,7 @@
         <th style="border: 2px solid black">Mark</th>
         <th style="border: 2px solid black">Model</th>
         <th style="border: 2px solid black">Number</th>
-        <th style="border: 2px solid black">Rentor</th>
+        <%--<th style="border: 2px solid black">Rentor</th>--%>
         <th style="border: 2px solid black">Action</th>
     </tr>
     </thead>
@@ -58,15 +58,15 @@
         <td>${car.mark}</td>
         <td>${car.model}</td>
         <td>${car.registeredNumber}</td>
-        <td>${car.rentor_id}</td>
+        <%--<td>${car.rentor_id}</td>--%>
 
         <td>
-            <c:if test="${car.rentor_id == 0 && sessionScope.username != null && role.equals('USER')}">
+            <%--<c:if test="${car.rentor_id == 0 && sessionScope.username != null && role.equals('USER')}">--%>
                 <a class="button" href="?method=rent&id=${car.id}">Rent</a>
-            </c:if>
-            <c:if test="${car.rentor_id == sessionScope.user_id && role.equals('USER')}">
+            <%--</c:if>--%>
+            <%--<c:if test="${car.rentor_id == sessionScope.user_id && role.equals('USER')}">--%>
                 <a class="button" href="?method=returnBack&id=${car.id}">Return</a>
-            </c:if>
+            <%--</c:if>--%>
             <c:if test="${role.equals('ADMIN')}">
                 <a class="button" href="?method=update&id=${car.id}">Edit</a>
                 <a class="button" href="?method=delete&id=${car.id}">Delete</a>

@@ -110,6 +110,21 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public List<Car> getByRentor(Long userId) {
+        List<Car> cars = null;
+
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            User rentor = new User();
+            rentor.setId(userId);
+            cars = carDaoImpl.getByRentor(connection, rentor);
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+        }
+
+        return cars;
+    }
+
+    @Override
     public void create(Car car) {
 
         try (Connection connection = HikariConnectionPool.getConnection()) {

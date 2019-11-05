@@ -4,6 +4,7 @@ import kz.almat.constant.CommonQueryScripts;
 import kz.almat.dao.CarDao;
 import kz.almat.model.Car;
 import kz.almat.model.CarCategory;
+import kz.almat.model.User;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -14,34 +15,48 @@ public class CarDaoImpl implements CarDao {
 
     private static final Logger log = Logger.getLogger(CarDaoImpl.class);
 
-    private static final String CAR = "car";
-    private static final String ALL_COLUMNS_CREATE = "(mark,model,registered_number)";
-    private static final String ALL_COLUMNS_UPDATE = "mark = ?, model= ?, registered_number =?";
-    private static final String STATEMENT_VALUES_CREATE = "(?, ?, ?)";
+    // where
+    private static final String WHERE = " where ";
 
-    private static final String ID_EQUALS = "id = ?";
+    //equals
+    private static final String ID_EQUALS = " id = ? ";
+    private static final String CATEGORY_ID_EQUALS = " category_id = ? ";
+
+    private static final String CAR = "car";
+    private static final String ALL_COLUMNS_UPDATE = "mark = ?, model= ?, registered_number =?";
+
     private static final String RENTOR_EQUALS = "rentor_id =?";
 
-    private static final String SELECT_ALL = "select c.id, c.mark, c.model, c.registered_number, c.category_id " +
-            " from car c " +
-            " left join agreement a on a.car_id = c.id " +
+    // selects
+    private static final String SELECT_ALL = " select c.id, c.mark, c.model, c.registered_number, c.category_id from car c ";
+    private static final String SELECT_ALL_FREE = SELECT_ALL + " left join agreement a on a.car_id = c.id " +
             " where a.car_id is null";
-    private static final String SELECT_BY_ID = SELECT_ALL + " and c.id = ?";
+    private static final String SELECT_BY_ID = SELECT_ALL + WHERE + ID_EQUALS;
+    private static final String SELECT_BY_RENTOR = SELECT_ALL + " inner join agreement a on a.car_id = c.id " +
+            " inner join user u on u.id = a.user_id" +
+            " where u.id = ?";
 
+    // insert
+    private static final String INSERT = "insert into car(mark, model, registered_number, category_id) " +
+            " values(?, ?, ?, ?)";
 
-    private static final String INSERT_CAR_SQL = String.format(CommonQueryScripts.INSERT, CAR, ALL_COLUMNS_CREATE, STATEMENT_VALUES_CREATE);
-    private static final String DELETE_CAR_BY_ID = String.format(CommonQueryScripts.DELETE_BY_COLUMN, CAR, ID_EQUALS);
-    private static final String UPDATE_CAR = String.format(CommonQueryScripts.UPDATE, CAR, ALL_COLUMNS_UPDATE, ID_EQUALS);
+    // delete
+    private static final String DELETE = " delete from car ";
+    private static final String DELETE_BY_ID = DELETE + WHERE + ID_EQUALS;
 
+    // update
+    private static final String UPDATE = " update car set mark = ?, model= ?, registered_number = ?, category_id = ? ";
+    private static final String UPDATE_BY_ID = UPDATE + WHERE + ID_EQUALS;
     private static final String UPDATE_RENTOR = String.format(CommonQueryScripts.UPDATE, CAR, RENTOR_EQUALS, ID_EQUALS);
 
     public CarDaoImpl() {
     }
 
+    @Override
     public List<Car> getList(Connection connection) {
         List<Car> cars = new ArrayList<>();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_FREE);
              ResultSet rs = preparedStatement.executeQuery()) {
             while (rs.next()) {
                 cars.add(build(rs));
@@ -53,6 +68,7 @@ public class CarDaoImpl implements CarDao {
         return cars;
     }
 
+    @Override
     public Car getById(Connection connection, Long id) {
         Car car = null;
 
@@ -70,12 +86,33 @@ public class CarDaoImpl implements CarDao {
         return car;
     }
 
+    @Override
+    public List<Car> getByRentor(Connection connection, User rentor) {
+        List<Car> cars = new ArrayList<>();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_RENTOR)){
+             preparedStatement.setLong(1, rentor.getId());
+              try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    cars.add(build(rs));
+                }
+              }
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+        return cars;
+    }
+
+    @Override
     public boolean create(Connection connection, Car car) {
 
-        try (PreparedStatement statement = connection.prepareStatement(INSERT_CAR_SQL)) {
+        try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
             statement.setString(1, car.getMark());
             statement.setString(2, car.getModel());
             statement.setString(3, car.getRegisteredNumber());
+            statement.setLong(4, car.getCategory().getId());
 
             return (1 == statement.executeUpdate());
         } catch (SQLException e) {
@@ -84,11 +121,13 @@ public class CarDaoImpl implements CarDao {
         return false;
     }
 
+    @Override
     public boolean update(Connection connection, Long id, Car car) {
-        try (PreparedStatement statement = connection.prepareStatement(UPDATE_CAR)) {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_BY_ID)) {
             statement.setString(1, car.getMark());
             statement.setString(2, car.getModel());
             statement.setString(3, car.getRegisteredNumber());
+            statement.setLong(4, car.getCategory().getId());
             statement.setLong(4, id);
 
             return (1 == statement.executeUpdate());
@@ -99,9 +138,10 @@ public class CarDaoImpl implements CarDao {
         return false;
     }
 
+    @Override
     public boolean delete(Connection connection, Long id) {
 
-        try (PreparedStatement statement = connection.prepareStatement(DELETE_CAR_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID)) {
             statement.setLong(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -135,6 +175,7 @@ public class CarDaoImpl implements CarDao {
         return new Car(carId, mark, model, registeredNumber, carCategory);
     }
 
+    @Override
     public boolean returnBack(Connection connection, Long carId, Long userId) {
 
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_RENTOR)) {
@@ -148,4 +189,6 @@ public class CarDaoImpl implements CarDao {
 
         return false;
     }
+
+
 }

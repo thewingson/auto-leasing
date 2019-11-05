@@ -15,4 +15,6 @@ public interface CarService extends CommonService<Car> {
     List<CarDTO> getAllDTO();
 
     CarDTO getByIdDTO(Long carId);
+
+    List<Car> getByRentor(Long userId);
 }

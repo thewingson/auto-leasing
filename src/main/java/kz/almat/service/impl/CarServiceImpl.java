@@ -1,14 +1,7 @@
 package kz.almat.service.impl;
 
-import kz.almat.dao.DriverLicenseDao;
-import kz.almat.dao.impl.AgreementDaoImpl;
-import kz.almat.dao.impl.CarDaoImpl;
-import kz.almat.dao.impl.DriverLicenseDaoImpl;
-import kz.almat.dao.impl.UserDaoImpl;
-import kz.almat.model.Agreement;
-import kz.almat.model.Car;
-import kz.almat.model.DriverLicense;
-import kz.almat.model.User;
+import kz.almat.dao.impl.*;
+import kz.almat.model.*;
 import kz.almat.model.dto.CarDTO;
 import kz.almat.service.CarService;
 import kz.almat.util.HikariConnectionPool;
@@ -16,26 +9,35 @@ import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class CarServiceImpl implements CarService {
 
     private static final Logger log = Logger.getLogger(CarServiceImpl.class);
 
-    private CarDaoImpl carDaoImpl;
+    private static final Long COMPANY_ID = 7L;
 
-    private UserDaoImpl userDaoImpl;
+    private CarDaoImpl carDaoImpl;
 
     private DriverLicenseDaoImpl driverLicenseDaoImpl;
 
     private AgreementDaoImpl agreementDaoImpl;
 
+    private CarCategoryDaoImpl carCategoryDaoImpl;
+
+    private BankAccountDaoImpl bankAccountDaoImpl;
+
+    private OperationDaoImpl operationDaoImpl;
+
     public CarServiceImpl() {
         this.carDaoImpl = new CarDaoImpl();
-        this.userDaoImpl = new UserDaoImpl();
         this.driverLicenseDaoImpl = new DriverLicenseDaoImpl();
         this.agreementDaoImpl = new AgreementDaoImpl();
+        this.carCategoryDaoImpl = new CarCategoryDaoImpl();
+        this.bankAccountDaoImpl = new BankAccountDaoImpl();
+        this.operationDaoImpl = new OperationDaoImpl();
     }
 
     @Override
@@ -155,17 +157,33 @@ public class CarServiceImpl implements CarService {
     @Override
     public void rent(Agreement agreement, String driverLicenseNumber) {
 
-
         try (Connection connection = HikariConnectionPool.getConnection()) {
 
-            if (driverLicenseDaoImpl.getByLicenseNumber(connection, driverLicenseNumber) != null &&
-                    agreementDaoImpl.create(connection, agreement)) {
-                connection.commit();
-            } else {
-                connection.rollback();
+            DriverLicense driverLicense = driverLicenseDaoImpl.getByLicenseNumber(connection, driverLicenseNumber);
+
+            if (driverLicense != null && driverLicense.getOwner().getId() == agreement.getRentor().getId()) {
+
+                CarCategory carCategory = carCategoryDaoImpl.getByCarId(connection, agreement.getCar().getId());
+                BankAccount bankAccountRentor = bankAccountDaoImpl.getByOwnerId(connection, agreement.getRentor());
+                BankAccount bankAccountCompany = bankAccountDaoImpl.getById(connection, COMPANY_ID);
+                Operation operation = new Operation(null, carCategory.getCostPerDay(), bankAccountRentor, bankAccountCompany, Timestamp.valueOf(LocalDateTime.now()), OperationCode.RENT);
+
+                bankAccountRentor.setBalance(bankAccountRentor.getBalance() - carCategory.getCostPerDay());
+                bankAccountCompany.setBalance(bankAccountCompany.getBalance() + carCategory.getCostPerDay());
+
+                if (bankAccountDaoImpl.update(connection, null, bankAccountRentor) &&
+                        bankAccountDaoImpl.update(connection, null, bankAccountCompany) &&
+                        operationDaoImpl.create(connection, operation) &&
+                        agreementDaoImpl.create(connection, agreement)) {
+                    connection.commit();
+                } else {
+                    connection.rollback();
+                }
             }
+
         } catch (SQLException e) {
             log.error(e.getMessage());
+
         }
 
     }

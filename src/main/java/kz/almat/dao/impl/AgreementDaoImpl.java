@@ -1,6 +1,5 @@
 package kz.almat.dao.impl;
 
-import kz.almat.constant.CommonQueryScripts;
 import kz.almat.dao.AgreementDao;
 import kz.almat.model.Agreement;
 import org.apache.log4j.Logger;
@@ -14,14 +13,22 @@ public class AgreementDaoImpl implements AgreementDao {
 
     private static final Logger log = Logger.getLogger(CarDaoImpl.class);
 
-    private static final String AGREEMENT = "agreement";
-    private static final String ALL_COLUMNS_CREATE = "(user_id,car_id,start_date,end_date)";
-    private static final String STATEMENT_VALUES_CREATE = "(?, ?, ?, ?)";
-    private static final String ID_EQUALS = "id = ?";
+    // where
+    private static final String WHERE = " where ";
+
+    //equals
+    private static final String ID_EQUALS = " id = ? ";
+//    private static final String SENDER_ID_EQUALS = " sender_id = ? ";
+//    private static final String RECIEVER_ID_EQUALS = " reciever_id = ? ";
 
 
-    private static final String INSERT = String.format(CommonQueryScripts.INSERT, AGREEMENT, ALL_COLUMNS_CREATE, STATEMENT_VALUES_CREATE);
-    private static final String DELETE = String.format(CommonQueryScripts.DELETE_BY_COLUMN, AGREEMENT, ID_EQUALS);
+    // insert
+    private static final String INSERT = "insert into agreement(user_id, car_id, start_date, end_date) " +
+            " values(?, ?, ?, ?)";
+
+    // delete
+    private static final String DELETE = " delete from agreement ";
+    private static final String DELETE_BY_ID = DELETE + WHERE + ID_EQUALS;
 
     @Override
     public List<Agreement> getList(Connection connection) {
@@ -42,11 +49,12 @@ public class AgreementDaoImpl implements AgreementDao {
             statement.setTimestamp(3, agreement.getStartDate());
             statement.setTimestamp(4, agreement.getEndDate());
 
-            return (1 == statement.executeUpdate());
+            statement.executeUpdate();
         } catch (SQLException e) {
             log.error(e.getMessage());
+            return false;
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -56,16 +64,6 @@ public class AgreementDaoImpl implements AgreementDao {
 
     @Override
     public boolean delete(Connection connection, Long id) {
-
-        try (PreparedStatement statement = connection.prepareStatement(DELETE)){
-            statement.setLong(1, id);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            log.error(e.getMessage());
-            return false;
-        }
-
-        return true;
-
+        return false;
     }
 }

@@ -6,6 +6,7 @@ public class Car {
     private String mark;
     private String model;
     private String registeredNumber;
+    private CarCategory category;
 
     public Car() {
     }
@@ -47,5 +48,13 @@ public class Car {
 
     public void setRegisteredNumber(String registeredNumber) {
         this.registeredNumber = registeredNumber;
+    }
+
+    public CarCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(CarCategory category) {
+        this.category = category;
     }
 }

@@ -61,12 +61,9 @@
         <%--<td>${car.rentor_id}</td>--%>
 
         <td>
-            <%--<c:if test="${car.rentor_id == 0 && sessionScope.username != null && role.equals('USER')}">--%>
+            <c:if test="${role.equals('USER')}">
                 <a class="button" href="?method=rent&id=${car.id}">Rent</a>
-            <%--</c:if>--%>
-            <%--<c:if test="${car.rentor_id == sessionScope.user_id && role.equals('USER')}">--%>
-                <a class="button" href="?method=returnBack&id=${car.id}">Return</a>
-            <%--</c:if>--%>
+            </c:if>
             <c:if test="${role.equals('ADMIN')}">
                 <a class="button" href="?method=update&id=${car.id}">Edit</a>
                 <a class="button" href="?method=delete&id=${car.id}">Delete</a>

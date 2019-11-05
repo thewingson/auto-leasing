@@ -11,11 +11,12 @@ public class Car {
     public Car() {
     }
 
-    public Car(Long id, String mark, String model, String registeredNumber) {
+    public Car(Long id, String mark, String model, String registeredNumber, CarCategory category) {
         this.id = id;
         this.mark = mark;
         this.model = model;
         this.registeredNumber = registeredNumber;
+        this.category = category;
     }
 
     public Long getId() {

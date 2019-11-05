@@ -3,6 +3,7 @@ package kz.almat.dao.impl;
 import kz.almat.constant.CommonQueryScripts;
 import kz.almat.dao.CarDao;
 import kz.almat.model.Car;
+import kz.almat.model.CarCategory;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -21,7 +22,7 @@ public class CarDaoImpl implements CarDao {
     private static final String ID_EQUALS = "id = ?";
     private static final String RENTOR_EQUALS = "rentor_id =?";
 
-    private static final String SELECT_ALL = "select c.id, c.mark, c.model, c.registered_number " +
+    private static final String SELECT_ALL = "select c.id, c.mark, c.model, c.registered_number, c.category_id " +
             " from car c " +
             " left join agreement a on a.car_id = c.id " +
             " where a.car_id is null";
@@ -116,17 +117,22 @@ public class CarDaoImpl implements CarDao {
         String mark = null;
         String model = null;
         String registeredNumber = null;
+        Long categoryId = null;
 
         try {
             carId = rs.getLong("id");
             mark = rs.getString("mark");
             model = rs.getString("model");
             registeredNumber = rs.getString("registered_number");
+            categoryId = rs.getLong("category_id");
         } catch (SQLException e) {
             log.error(e.getMessage());
         }
 
-        return new Car(carId, mark, model, registeredNumber);
+        CarCategory carCategory = new CarCategory();
+        carCategory.setId(categoryId);
+
+        return new Car(carId, mark, model, registeredNumber, carCategory);
     }
 
     public boolean returnBack(Connection connection, Long carId, Long userId) {

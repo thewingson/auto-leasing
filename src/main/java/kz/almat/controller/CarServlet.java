@@ -110,7 +110,7 @@ public class CarServlet extends HttpServlet {
         String model = req.getParameter("model");
         String registeredNumber = req.getParameter("registeredNumber");
 
-        Car car = new Car(null, mark, model, registeredNumber);
+        Car car = new Car(null, mark, model, registeredNumber, null);
         carServiceImpl.create(car);
 
         getList(req, resp);
@@ -144,7 +144,7 @@ public class CarServlet extends HttpServlet {
         String model = req.getParameter("model");
         String registeredNumber = req.getParameter("registeredNumber");
 
-        Car carToUpdate = new Car(id, mark, model, registeredNumber);
+        Car carToUpdate = new Car(id, mark, model, registeredNumber, null);
 
         carServiceImpl.update(id, carToUpdate);
 
@@ -175,7 +175,7 @@ public class CarServlet extends HttpServlet {
         Timestamp endDate = Timestamp.valueOf(req.getParameter("endDate"));
 
         User user = new User(user_id, null, null, null, null, null);
-        Car car = new Car(car_id, null, null,null);
+        Car car = new Car(car_id, null, null,null, null);
 
         Agreement agreement = new Agreement(null, user, car, startDate, endDate);
 
@@ -184,7 +184,6 @@ public class CarServlet extends HttpServlet {
         getList(req, resp);
 
     }
-
 
     private void returnBack(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

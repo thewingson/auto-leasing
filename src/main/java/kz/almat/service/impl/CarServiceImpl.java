@@ -17,7 +17,7 @@ public class CarServiceImpl implements CarService {
 
     private static final Logger log = Logger.getLogger(CarServiceImpl.class);
 
-    private static final Long COMPANY_ID = 7L;
+    private static final Long COMPANY_BANK_ACCOUNT_ID = 3L;
 
     private CarDaoImpl carDaoImpl;
 
@@ -165,7 +165,7 @@ public class CarServiceImpl implements CarService {
 
                 CarCategory carCategory = carCategoryDaoImpl.getByCarId(connection, agreement.getCar().getId());
                 BankAccount bankAccountRentor = bankAccountDaoImpl.getByOwnerId(connection, agreement.getRentor());
-                BankAccount bankAccountCompany = bankAccountDaoImpl.getById(connection, COMPANY_ID);
+                BankAccount bankAccountCompany = bankAccountDaoImpl.getById(connection, COMPANY_BANK_ACCOUNT_ID);
                 Operation operation = new Operation(null, carCategory.getCostPerDay(), bankAccountRentor, bankAccountCompany, Timestamp.valueOf(LocalDateTime.now()), OperationCode.RENT);
 
                 bankAccountRentor.setBalance(bankAccountRentor.getBalance() - carCategory.getCostPerDay());

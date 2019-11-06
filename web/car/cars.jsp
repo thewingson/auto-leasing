@@ -23,7 +23,12 @@
     </c:if>
     <c:if test="${sessionScope.username != null}">
         <li><a class="button" href="/auth?method=signOut">Sign Out</a></li>
+    </c:if>
+    <c:if test="${role.equals('USER')}">
         <li><a class="button" href="/car?method=myCars">My Cars</a></li>
+    </c:if>
+    <c:if test="${role.equals('ADMIN')}">
+        <li><a class="button" href="/car?method=returnRequests">Return Requests</a></li>
     </c:if>
 
 </ul>

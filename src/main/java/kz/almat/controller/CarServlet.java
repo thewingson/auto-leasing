@@ -7,6 +7,7 @@ import kz.almat.model.Car;
 import kz.almat.model.CarCategory;
 import kz.almat.model.User;
 import kz.almat.model.dto.CarDTO;
+import kz.almat.model.enums.CarState;
 import kz.almat.service.impl.CarServiceImpl;
 
 import javax.servlet.RequestDispatcher;
@@ -22,6 +23,8 @@ import java.util.List;
 public class CarServlet extends HttpServlet {
 
     private final CarServiceImpl carServiceImpl = new CarServiceImpl();
+
+    private HttpSession session;
 
     @Override
     public void init() {
@@ -80,6 +83,9 @@ public class CarServlet extends HttpServlet {
                 break;
             case "returnDo":
                 returnDo(req, resp);
+                break;
+            case "returnRequests":
+                returnRequests(req, resp);
                 break;
             default:
                 getList(req, resp);
@@ -178,7 +184,7 @@ public class CarServlet extends HttpServlet {
 
     private void rentDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        HttpSession session = req.getSession();
+        session = req.getSession();
 
         Long car_id = Long.parseLong(req.getParameter("id"));
         Long user_id = (Long) session.getAttribute("user_id");
@@ -200,7 +206,7 @@ public class CarServlet extends HttpServlet {
 
     private void myCars(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        HttpSession session = req.getSession();
+        session = req.getSession();
         Long userId = (Long) session.getAttribute(CommonViewParameters.ID);
 
         List<Car> cars = carServiceImpl.getByRentor(userId);
@@ -212,6 +218,28 @@ public class CarServlet extends HttpServlet {
     }
 
     private void returnDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        Long id = Long.parseLong(req.getParameter("id"));
+
+        session = req.getSession();
+
+        Long userId = (Long) session.getAttribute(CommonViewParameters.ID);
+
+        carServiceImpl.returnBack(id, userId);
+
+        myCars(req, resp);
+    }
+
+    private void returnRequests(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        session = req.getSession();
+        Long userId = (Long) session.getAttribute(CommonViewParameters.ID);
+
+        List<Car> cars = carServiceImpl.getByState(CarState.RETURN);
+
+        req.setAttribute("cars", cars);
+        RequestDispatcher dispatcher = req.getRequestDispatcher("car/return-requests.jsp");
+        dispatcher.forward(req, resp);
 
     }
 

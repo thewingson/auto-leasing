@@ -127,6 +127,19 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public List<Car> getByState(CarState state) {
+        List<Car> cars = null;
+
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+            cars = carDaoImpl.getByState(connection, state);
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+        }
+
+        return cars;
+    }
+
+    @Override
     public void create(Car car) {
 
         try (Connection connection = HikariConnectionPool.getConnection()) {
@@ -214,13 +227,18 @@ public class CarServiceImpl implements CarService {
 
         try (Connection connection = HikariConnectionPool.getConnection()) {
 
-            if (carDaoImpl.returnBack(connection, carId, userId)) {
-                connection.commit();
-            } else {
-                connection.rollback();
-            }
+                Car car = carDaoImpl.getById(connection, carId);
+                car.setCarState(CarState.RETURN);
+
+                if (carDaoImpl.update(connection, car.getId(), car)) {
+                    connection.commit();
+                } else {
+                    connection.rollback();
+                }
+
         } catch (SQLException e) {
             log.error(e.getMessage());
+
         }
 
     }

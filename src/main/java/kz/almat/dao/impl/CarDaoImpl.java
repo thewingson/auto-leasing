@@ -35,6 +35,7 @@ public class CarDaoImpl implements CarDao {
     private static final String SELECT_BY_RENTOR = SELECT_ALL + " inner join agreement a on a.car_id = c.id " +
             " inner join user u on u.id = a.user_id" +
             " where u.id = ?";
+    private static final String SELECT_BY_CAR_STATE = SELECT_ALL + WHERE + " cs.name = ?";
 
     // insert
     private static final String INSERT = "insert into car(mark, model, registered_number, category_id, state_id) " +
@@ -98,6 +99,25 @@ public class CarDaoImpl implements CarDao {
                     cars.add(build(rs));
                 }
               }
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+        return cars;
+    }
+
+    @Override
+    public List<Car> getByState(Connection connection, CarState state) {
+        List<Car> cars = new ArrayList<>();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_CAR_STATE)){
+            preparedStatement.setString(1, state.toString());
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    cars.add(build(rs));
+                }
+            }
         } catch (SQLException e) {
             log.error(e.getMessage());
             return null;

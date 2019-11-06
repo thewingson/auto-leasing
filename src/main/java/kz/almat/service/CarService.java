@@ -3,6 +3,7 @@ package kz.almat.service;
 import kz.almat.model.Agreement;
 import kz.almat.model.Car;
 import kz.almat.model.dto.CarDTO;
+import kz.almat.model.enums.CarState;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface CarService extends CommonService<Car> {
     CarDTO getByIdDTO(Long carId);
 
     List<Car> getByRentor(Long userId);
+
+    List<Car> getByState(CarState aReturn);
 }

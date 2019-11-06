@@ -20,11 +20,10 @@ public class CarDaoImpl implements CarDao {
     private static final String WHERE = " where ";
 
     //equals
-    private static final String ID_EQUALS = " id = ? ";
-    private static final String CATEGORY_ID_EQUALS = " category_id = ? ";
+    private static final String ID_EQUALS = " c.id = ? ";
+    private static final String CATEGORY_ID_EQUALS = " c.category_id = ? ";
 
     private static final String CAR = "car";
-    private static final String ALL_COLUMNS_UPDATE = "mark = ?, model= ?, registered_number =?";
 
     private static final String RENTOR_EQUALS = "rentor_id =?";
 
@@ -46,8 +45,8 @@ public class CarDaoImpl implements CarDao {
     private static final String DELETE_BY_ID = DELETE + WHERE + ID_EQUALS;
 
     // update
-    private static final String UPDATE = " update car set mark = ?, model= ?, registered_number = ?, category_id = ?, " +
-            " state_id = (select cs.id from car_state cs where cs.name = ?) ";
+    private static final String UPDATE = " update car c set c.mark = ?, c.model= ?, c.registered_number = ?, c.category_id = ?, " +
+            " c.state_id = (select cs.id from car_state cs where cs.name = ?) ";
     private static final String UPDATE_BY_ID = UPDATE + WHERE + ID_EQUALS;
     private static final String UPDATE_RENTOR = String.format(CommonQueryScripts.UPDATE, CAR, RENTOR_EQUALS, ID_EQUALS);
 

@@ -8,6 +8,7 @@ import kz.almat.model.CarCategory;
 import kz.almat.model.User;
 import kz.almat.model.dto.CarDTO;
 import kz.almat.model.enums.CarState;
+import kz.almat.service.impl.AgreementServiceImpl;
 import kz.almat.service.impl.CarServiceImpl;
 
 import javax.servlet.RequestDispatcher;
@@ -23,6 +24,8 @@ import java.util.List;
 public class CarServlet extends HttpServlet {
 
     private final CarServiceImpl carServiceImpl = new CarServiceImpl();
+
+    private final AgreementServiceImpl agreementServiceImpl = new AgreementServiceImpl();
 
     private HttpSession session;
 
@@ -88,10 +91,10 @@ public class CarServlet extends HttpServlet {
                 returnRequests(req, resp);
                 break;
             case "acceptReturn":
-                acceptReturn(req, resp);
+                acceptReturnDo(req, resp);
                 break;
-            case "returnReject":
-                returnReject(req, resp);
+            case "rejectReturn":
+                rejectReturn(req, resp);
                 break;
             default:
                 getList(req, resp);
@@ -200,7 +203,7 @@ public class CarServlet extends HttpServlet {
         Timestamp endDate = Timestamp.valueOf(req.getParameter("endDate"));
 
         User user = new User(user_id, null, null, null, null, null);
-        Car car = new Car(car_id, null, null,null, null, null);
+        Car car = new Car(car_id, null, null, null, null, null);
 
         Agreement agreement = new Agreement(null, user, car, startDate, endDate);
 
@@ -239,7 +242,6 @@ public class CarServlet extends HttpServlet {
     private void returnRequests(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         session = req.getSession();
-        Long userId = (Long) session.getAttribute(CommonViewParameters.ID);
 
         List<Car> cars = carServiceImpl.getByState(CarState.RETURN);
 
@@ -249,7 +251,7 @@ public class CarServlet extends HttpServlet {
 
     }
 
-    private void acceptReturn(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void acceptReturnDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Long id = Long.parseLong(req.getParameter("id"));
 
@@ -259,26 +261,18 @@ public class CarServlet extends HttpServlet {
 
     }
 
-    private void returnReject(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void rejectReturn(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        session = req.getSession();
+        Long carId = Long.parseLong(req.getParameter("id"));
 
-        Long car_id = Long.parseLong(req.getParameter("id"));
-        Long user_id = (Long) session.getAttribute("user_id");
+        Car carToRepair = carServiceImpl.getById(carId);
+        Agreement agreement = agreementServiceImpl.getByCar(carToRepair);
 
-        String driverLicense = req.getParameter("driverLicense");
-        Timestamp startDate = Timestamp.valueOf(req.getParameter("startDate"));
-        Timestamp endDate = Timestamp.valueOf(req.getParameter("endDate"));
-
-        User user = new User(user_id, null, null, null, null, null);
-        Car car = new Car(car_id, null, null,null, null, null);
-
-        Agreement agreement = new Agreement(null, user, car, startDate, endDate);
-
-        carServiceImpl.rent(agreement, driverLicense);
-
-        getList(req, resp);
+        req.setAttribute("car", carToRepair);
+        req.setAttribute("rentor", agreement.getRentor());
+        req.getRequestDispatcher("car/reject-car.jsp").forward(req, resp);
 
     }
+
 
 }

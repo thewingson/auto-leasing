@@ -17,6 +17,7 @@
 <c:set var="cars" value="${requestScope.cars}"/>
 
 <ul>
+    <li><a class="button" href="/car?method=getList">Cars</a></li>
     <c:if test="${sessionScope.username == null}">
         <li><a class="button" href="/auth?method=signIn">Sign In</a></li>
         <li><a class="button" href="/auth?method=signUp">Sign Up</a></li>
@@ -30,7 +31,6 @@
     <c:if test="${role.equals('ADMIN')}">
         <li><a class="button" href="/car?method=returnRequests">Return Requests</a></li>
     </c:if>
-
 </ul>
 
 <form action="car" method="POST">

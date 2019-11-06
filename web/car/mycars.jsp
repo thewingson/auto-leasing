@@ -16,6 +16,7 @@
 <c:set var="cars" value="${requestScope.cars}"/>
 
 <ul>
+    <li><a class="button" href="/car?method=getList">Cars</a></li>
     <c:if test="${sessionScope.username == null}">
         <li><a class="button" href="/auth?method=signIn">Sign In</a></li>
         <li><a class="button" href="/auth?method=signUp">Sign Up</a></li>
@@ -23,7 +24,6 @@
     <c:if test="${sessionScope.username != null}">
         <li><a class="button" href="/auth?method=signOut">Sign Out</a></li>
     </c:if>
-
 </ul>
 
 <h3>My Cars</h3>

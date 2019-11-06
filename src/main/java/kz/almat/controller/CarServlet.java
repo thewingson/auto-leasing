@@ -2,10 +2,7 @@ package kz.almat.controller;
 
 
 import kz.almat.constant.CommonViewParameters;
-import kz.almat.model.Agreement;
-import kz.almat.model.Car;
-import kz.almat.model.CarCategory;
-import kz.almat.model.User;
+import kz.almat.model.*;
 import kz.almat.model.dto.CarDTO;
 import kz.almat.model.enums.CarState;
 import kz.almat.service.impl.AgreementServiceImpl;
@@ -53,6 +50,9 @@ public class CarServlet extends HttpServlet {
                 break;
             case "rent":
                 rentDo(req, resp);
+                break;
+            case "rejectReturnDo":
+                rejectReturnDo(req, resp);
                 break;
         }
 
@@ -270,7 +270,21 @@ public class CarServlet extends HttpServlet {
 
         req.setAttribute("car", carToRepair);
         req.setAttribute("rentor", agreement.getRentor());
-        req.getRequestDispatcher("car/reject-car.jsp").forward(req, resp);
+        req.getRequestDispatcher("car/reject-request.jsp").forward(req, resp);
+
+    }
+
+    private void rejectReturnDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        Long carId = Long.parseLong(req.getParameter("carId"));
+        Double feeAmount = Double.parseDouble(req.getParameter("feeAmount"));
+        String description = req.getParameter("description");
+
+        Penalty penalty = new Penalty(null, null, feeAmount, description);
+
+        carServiceImpl.rejectReturn(carId, penalty);
+
+        returnRequests(req, resp);
 
     }
 

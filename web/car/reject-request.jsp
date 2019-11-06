@@ -73,7 +73,7 @@
     <br/>
     Description: <input type="text" name="description" />
     <br/>
-    <input type="hidden" name="id" value="${car.id}"/>
+    <input type="hidden" name="carId" value="${car.id}"/>
     <input type="hidden" name="method" value="rejectReturnDo"/>
     <input type="submit" value="Submit"/>
 </form>

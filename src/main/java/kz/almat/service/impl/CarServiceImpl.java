@@ -33,6 +33,8 @@ public class CarServiceImpl implements CarService {
 
     private OperationDaoImpl operationDaoImpl;
 
+    private PenaltyDaoImpl penaltyDaoImpl;
+
     public CarServiceImpl() {
         this.carDaoImpl = new CarDaoImpl();
         this.driverLicenseDaoImpl = new DriverLicenseDaoImpl();
@@ -40,6 +42,7 @@ public class CarServiceImpl implements CarService {
         this.carCategoryDaoImpl = new CarCategoryDaoImpl();
         this.bankAccountDaoImpl = new BankAccountDaoImpl();
         this.operationDaoImpl = new OperationDaoImpl();
+        this.penaltyDaoImpl = new PenaltyDaoImpl();
     }
 
     @Override
@@ -155,6 +158,27 @@ public class CarServiceImpl implements CarService {
         } catch (SQLException e) {
             log.error(e.getMessage());
 
+        }
+    }
+
+    @Override
+    public void rejectReturn(Long carId, Penalty penalty) {
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+
+            Car car = carDaoImpl.getById(connection, carId);
+            car.setCarState(CarState.REPAIR);
+
+            User debtor = agreementDaoImpl.getByCar(connection, car.getId()).getRentor();
+            penalty.setDebtor(debtor);
+
+            if (penaltyDaoImpl.create(connection, penalty) &&
+                    carDaoImpl.update(connection, carId, car)) {
+                connection.commit();
+            } else {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage());
         }
     }
 

@@ -2,6 +2,7 @@ package kz.almat.service;
 
 import kz.almat.model.Agreement;
 import kz.almat.model.Car;
+import kz.almat.model.Penalty;
 import kz.almat.model.dto.CarDTO;
 import kz.almat.model.enums.CarState;
 
@@ -22,4 +23,6 @@ public interface CarService extends CommonService<Car> {
     List<Car> getByState(CarState aReturn);
 
     void acceptReturn(Long id);
+
+    void rejectReturn(Long carId, Penalty penalty);
 }

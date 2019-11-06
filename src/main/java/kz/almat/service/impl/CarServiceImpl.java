@@ -3,6 +3,8 @@ package kz.almat.service.impl;
 import kz.almat.dao.impl.*;
 import kz.almat.model.*;
 import kz.almat.model.dto.CarDTO;
+import kz.almat.model.enums.CarState;
+import kz.almat.model.enums.OperationCode;
 import kz.almat.service.CarService;
 import kz.almat.util.HikariConnectionPool;
 import org.apache.log4j.Logger;
@@ -183,13 +185,17 @@ public class CarServiceImpl implements CarService {
                 BankAccount bankAccountCompany = bankAccountDaoImpl.getById(connection, COMPANY_BANK_ACCOUNT_ID);
                 Operation operation = new Operation(null, carCategory.getCostPerDay(), bankAccountRentor, bankAccountCompany, Timestamp.valueOf(LocalDateTime.now()), OperationCode.RENT);
 
+                Car car = carDaoImpl.getById(connection, agreement.getCar().getId());
+                car.setCarState(CarState.INUSE);
+
                 bankAccountRentor.setBalance(bankAccountRentor.getBalance() - carCategory.getCostPerDay());
                 bankAccountCompany.setBalance(bankAccountCompany.getBalance() + carCategory.getCostPerDay());
 
                 if (bankAccountDaoImpl.update(connection, null, bankAccountRentor) &&
                         bankAccountDaoImpl.update(connection, null, bankAccountCompany) &&
                         operationDaoImpl.create(connection, operation) &&
-                        agreementDaoImpl.create(connection, agreement)) {
+                        agreementDaoImpl.create(connection, agreement) &&
+                        carDaoImpl.update(connection, car.getId(), car)) {
                     connection.commit();
                 } else {
                     connection.rollback();

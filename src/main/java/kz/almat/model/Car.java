@@ -1,5 +1,7 @@
 package kz.almat.model;
 
+import kz.almat.model.enums.CarState;
+
 public class Car {
 
     private Long id;
@@ -7,16 +9,18 @@ public class Car {
     private String model;
     private String registeredNumber;
     private CarCategory category;
+    private CarState carState;
 
     public Car() {
     }
 
-    public Car(Long id, String mark, String model, String registeredNumber, CarCategory category) {
+    public Car(Long id, String mark, String model, String registeredNumber, CarCategory category, CarState carState) {
         this.id = id;
         this.mark = mark;
         this.model = model;
         this.registeredNumber = registeredNumber;
         this.category = category;
+        this.carState = carState;
     }
 
     public Long getId() {
@@ -57,5 +61,13 @@ public class Car {
 
     public void setCategory(CarCategory category) {
         this.category = category;
+    }
+
+    public CarState getCarState() {
+        return carState;
+    }
+
+    public void setCarState(CarState carState) {
+        this.carState = carState;
     }
 }

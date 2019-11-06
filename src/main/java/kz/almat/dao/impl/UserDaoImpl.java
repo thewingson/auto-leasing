@@ -2,7 +2,7 @@ package kz.almat.dao.impl;
 
 import kz.almat.constant.CommonQueryScripts;
 import kz.almat.dao.UserDao;
-import kz.almat.model.Role;
+import kz.almat.model.enums.Role;
 import kz.almat.model.User;
 import org.apache.log4j.Logger;
 

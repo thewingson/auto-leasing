@@ -1,5 +1,7 @@
 package kz.almat.model;
 
+import kz.almat.model.enums.Role;
+
 public class User {
 
     private Long id;

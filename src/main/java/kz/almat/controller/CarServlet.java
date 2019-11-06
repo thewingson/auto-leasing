@@ -78,6 +78,9 @@ public class CarServlet extends HttpServlet {
             case "myCars":
                 myCars(req, resp);
                 break;
+            case "returnDo":
+                returnDo(req, resp);
+                break;
             default:
                 getList(req, resp);
                 break;
@@ -116,7 +119,7 @@ public class CarServlet extends HttpServlet {
         CarCategory carCategory = new CarCategory();
         carCategory.setId(categoryId);
 
-        Car car = new Car(null, mark, model, registeredNumber, carCategory);
+        Car car = new Car(null, mark, model, registeredNumber, carCategory, null);
         carServiceImpl.create(car);
 
         getList(req, resp);
@@ -154,7 +157,7 @@ public class CarServlet extends HttpServlet {
         CarCategory carCategory = new CarCategory();
         carCategory.setId(categoryId);
 
-        Car carToUpdate = new Car(id, mark, model, registeredNumber, carCategory);
+        Car carToUpdate = new Car(id, mark, model, registeredNumber, carCategory, null);
 
         carServiceImpl.update(id, carToUpdate);
 
@@ -185,7 +188,7 @@ public class CarServlet extends HttpServlet {
         Timestamp endDate = Timestamp.valueOf(req.getParameter("endDate"));
 
         User user = new User(user_id, null, null, null, null, null);
-        Car car = new Car(car_id, null, null,null, null);
+        Car car = new Car(car_id, null, null,null, null, null);
 
         Agreement agreement = new Agreement(null, user, car, startDate, endDate);
 
@@ -205,6 +208,10 @@ public class CarServlet extends HttpServlet {
         req.setAttribute("cars", cars);
         RequestDispatcher dispatcher = req.getRequestDispatcher("car/mycars.jsp");
         dispatcher.forward(req, resp);
+
+    }
+
+    private void returnDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
     }
 

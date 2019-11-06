@@ -3,7 +3,7 @@ package kz.almat.dao.impl;
 import kz.almat.dao.OperationDao;
 import kz.almat.model.BankAccount;
 import kz.almat.model.Operation;
-import kz.almat.model.OperationCode;
+import kz.almat.model.enums.OperationCode;
 import org.apache.log4j.Logger;
 
 import java.sql.*;

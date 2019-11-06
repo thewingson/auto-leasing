@@ -1,7 +1,7 @@
 package kz.almat.controller;
 
 import kz.almat.constant.CommonViewParameters;
-import kz.almat.model.Role;
+import kz.almat.model.enums.Role;
 import kz.almat.model.User;
 import kz.almat.service.impl.AuthServiceImpl;
 import kz.almat.service.impl.UserServiceimpl;

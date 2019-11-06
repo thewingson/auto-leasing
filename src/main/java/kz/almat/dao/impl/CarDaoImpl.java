@@ -5,6 +5,7 @@ import kz.almat.dao.CarDao;
 import kz.almat.model.Car;
 import kz.almat.model.CarCategory;
 import kz.almat.model.User;
+import kz.almat.model.enums.CarState;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -28,24 +29,25 @@ public class CarDaoImpl implements CarDao {
     private static final String RENTOR_EQUALS = "rentor_id =?";
 
     // selects
-    private static final String SELECT_ALL = " select c.id, c.mark, c.model, c.registered_number, c.category_id from car c ";
-    private static final String SELECT_ALL_FREE = SELECT_ALL + " left join agreement a on a.car_id = c.id " +
-            " where a.car_id is null";
+    private static final String SELECT_ALL = " select c.id, c.mark, c.model, c.registered_number, c.category_id, cs.name as state from car c " +
+            " join car_state cs on cs.id = c.state_id";
+    private static final String SELECT_ALL_FREE = SELECT_ALL + WHERE + " cs.name = 'FREE'";
     private static final String SELECT_BY_ID = SELECT_ALL + WHERE + ID_EQUALS;
     private static final String SELECT_BY_RENTOR = SELECT_ALL + " inner join agreement a on a.car_id = c.id " +
             " inner join user u on u.id = a.user_id" +
             " where u.id = ?";
 
     // insert
-    private static final String INSERT = "insert into car(mark, model, registered_number, category_id) " +
-            " values(?, ?, ?, ?)";
+    private static final String INSERT = "insert into car(mark, model, registered_number, category_id, state_id) " +
+            " values(?, ?, ?, ?, (select cs.id from car_state cs where cs.name = ?))";
 
     // delete
     private static final String DELETE = " delete from car ";
     private static final String DELETE_BY_ID = DELETE + WHERE + ID_EQUALS;
 
     // update
-    private static final String UPDATE = " update car set mark = ?, model= ?, registered_number = ?, category_id = ? ";
+    private static final String UPDATE = " update car set mark = ?, model= ?, registered_number = ?, category_id = ?, " +
+            " state_id = (select cs.id from car_state cs where cs.name = ?) ";
     private static final String UPDATE_BY_ID = UPDATE + WHERE + ID_EQUALS;
     private static final String UPDATE_RENTOR = String.format(CommonQueryScripts.UPDATE, CAR, RENTOR_EQUALS, ID_EQUALS);
 
@@ -113,6 +115,7 @@ public class CarDaoImpl implements CarDao {
             statement.setString(2, car.getModel());
             statement.setString(3, car.getRegisteredNumber());
             statement.setLong(4, car.getCategory().getId());
+            statement.setString(5, CarState.FREE.toString());
 
             return (1 == statement.executeUpdate());
         } catch (SQLException e) {
@@ -128,7 +131,8 @@ public class CarDaoImpl implements CarDao {
             statement.setString(2, car.getModel());
             statement.setString(3, car.getRegisteredNumber());
             statement.setLong(4, car.getCategory().getId());
-            statement.setLong(4, id);
+            statement.setString(5, car.getCarState().toString());
+            statement.setLong(6, id);
 
             return (1 == statement.executeUpdate());
         } catch (SQLException e) {
@@ -158,6 +162,7 @@ public class CarDaoImpl implements CarDao {
         String model = null;
         String registeredNumber = null;
         Long categoryId = null;
+        String state = null;
 
         try {
             carId = rs.getLong("id");
@@ -165,6 +170,7 @@ public class CarDaoImpl implements CarDao {
             model = rs.getString("model");
             registeredNumber = rs.getString("registered_number");
             categoryId = rs.getLong("category_id");
+            state = rs.getString("state");
         } catch (SQLException e) {
             log.error(e.getMessage());
         }
@@ -172,7 +178,7 @@ public class CarDaoImpl implements CarDao {
         CarCategory carCategory = new CarCategory();
         carCategory.setId(categoryId);
 
-        return new Car(carId, mark, model, registeredNumber, carCategory);
+        return new Car(carId, mark, model, registeredNumber, carCategory, CarState.valueOf(state));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package kz.almat.model;
+package kz.almat.model.enums;
 
 public enum OperationCode {
     RENT,

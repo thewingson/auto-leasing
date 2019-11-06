@@ -1,5 +1,7 @@
 package kz.almat.model;
 
+import kz.almat.model.enums.OperationCode;
+
 import java.sql.Timestamp;
 
 public class Operation {

@@ -50,7 +50,7 @@
 
             <td>
                 <c:if test="${role.equals('USER')}">
-                    <a class="button" href="?method=returnBack&id=${car.id}">Return</a>
+                    <a class="button" href="?method=returnDo&id=${car.id}">Return</a>
                 </c:if>
             </td>
         </tr>

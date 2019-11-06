@@ -7,6 +7,7 @@ import kz.almat.model.dto.CarDTO;
 import kz.almat.model.enums.CarState;
 import kz.almat.service.impl.AgreementServiceImpl;
 import kz.almat.service.impl.CarServiceImpl;
+import kz.almat.service.impl.PenaltyServiceImpl;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -23,6 +24,8 @@ public class CarServlet extends HttpServlet {
     private final CarServiceImpl carServiceImpl = new CarServiceImpl();
 
     private final AgreementServiceImpl agreementServiceImpl = new AgreementServiceImpl();
+
+    private final PenaltyServiceImpl penaltyServiceImpl = new PenaltyServiceImpl();
 
     private HttpSession session;
 
@@ -95,6 +98,9 @@ public class CarServlet extends HttpServlet {
                 break;
             case "rejectReturn":
                 rejectReturn(req, resp);
+                break;
+            case "myPenalties":
+                myPenalties(req, resp);
                 break;
             default:
                 getList(req, resp);
@@ -285,6 +291,19 @@ public class CarServlet extends HttpServlet {
         carServiceImpl.rejectReturn(carId, penalty);
 
         returnRequests(req, resp);
+
+    }
+
+    private void myPenalties(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        session = req.getSession();
+        Long userId = (Long) session.getAttribute(CommonViewParameters.ID);
+
+        List<Penalty> penalties = penaltyServiceImpl.getByDebtor(userId);
+
+        req.setAttribute("penalties", penalties);
+        RequestDispatcher dispatcher = req.getRequestDispatcher("penalty/penalties.jsp");
+        dispatcher.forward(req, resp);
 
     }
 

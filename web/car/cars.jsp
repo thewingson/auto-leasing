@@ -27,6 +27,7 @@
     </c:if>
     <c:if test="${role.equals('USER')}">
         <li><a class="button" href="/car?method=myCars">My Cars</a></li>
+        <li><a class="button" href="/car?method=myPenalties">My Penalties</a></li>
     </c:if>
     <c:if test="${role.equals('ADMIN')}">
         <li><a class="button" href="/car?method=returnRequests">Return Requests</a></li>

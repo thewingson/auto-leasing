@@ -18,6 +18,7 @@ public class AgreementDaoImpl implements AgreementDao {
 
     //equals
     private static final String ID_EQUALS = " id = ? ";
+    private static final String CAR_ID_EQUALS = " car_id = ? ";
 //    private static final String SENDER_ID_EQUALS = " sender_id = ? ";
 //    private static final String RECIEVER_ID_EQUALS = " reciever_id = ? ";
 
@@ -29,6 +30,7 @@ public class AgreementDaoImpl implements AgreementDao {
     // delete
     private static final String DELETE = " delete from agreement ";
     private static final String DELETE_BY_ID = DELETE + WHERE + ID_EQUALS;
+    private static final String DELETE_BY_CAR_ID = DELETE + WHERE + CAR_ID_EQUALS;
 
     @Override
     public List<Agreement> getList(Connection connection) {
@@ -65,5 +67,18 @@ public class AgreementDaoImpl implements AgreementDao {
     @Override
     public boolean delete(Connection connection, Long id) {
         return false;
+    }
+
+    @Override
+    public boolean deleteByCar(Connection connection, Long carId) {
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_BY_CAR_ID)) {
+            statement.setLong(1, carId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            return false;
+        }
+
+        return true;
     }
 }

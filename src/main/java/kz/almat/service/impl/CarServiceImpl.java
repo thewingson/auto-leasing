@@ -140,6 +140,25 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public void acceptReturn(Long id) {
+        try (Connection connection = HikariConnectionPool.getConnection()) {
+
+            Car car = carDaoImpl.getById(connection, id);
+            car.setCarState(CarState.FREE);
+
+                if (agreementDaoImpl.deleteByCar(connection, id) &&
+                        carDaoImpl.update(connection, id, car)) {
+                    connection.commit();
+                } else {
+                    connection.rollback();
+                }
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+
+        }
+    }
+
+    @Override
     public void create(Car car) {
 
         try (Connection connection = HikariConnectionPool.getConnection()) {

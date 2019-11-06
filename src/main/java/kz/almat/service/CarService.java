@@ -20,4 +20,6 @@ public interface CarService extends CommonService<Car> {
     List<Car> getByRentor(Long userId);
 
     List<Car> getByState(CarState aReturn);
+
+    void acceptReturn(Long id);
 }

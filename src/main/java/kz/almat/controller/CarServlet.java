@@ -87,6 +87,12 @@ public class CarServlet extends HttpServlet {
             case "returnRequests":
                 returnRequests(req, resp);
                 break;
+            case "acceptReturn":
+                acceptReturn(req, resp);
+                break;
+            case "returnReject":
+                returnReject(req, resp);
+                break;
             default:
                 getList(req, resp);
                 break;
@@ -240,6 +246,38 @@ public class CarServlet extends HttpServlet {
         req.setAttribute("cars", cars);
         RequestDispatcher dispatcher = req.getRequestDispatcher("car/return-requests.jsp");
         dispatcher.forward(req, resp);
+
+    }
+
+    private void acceptReturn(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        Long id = Long.parseLong(req.getParameter("id"));
+
+        carServiceImpl.acceptReturn(id);
+
+        returnRequests(req, resp);
+
+    }
+
+    private void returnReject(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        session = req.getSession();
+
+        Long car_id = Long.parseLong(req.getParameter("id"));
+        Long user_id = (Long) session.getAttribute("user_id");
+
+        String driverLicense = req.getParameter("driverLicense");
+        Timestamp startDate = Timestamp.valueOf(req.getParameter("startDate"));
+        Timestamp endDate = Timestamp.valueOf(req.getParameter("endDate"));
+
+        User user = new User(user_id, null, null, null, null, null);
+        Car car = new Car(car_id, null, null,null, null, null);
+
+        Agreement agreement = new Agreement(null, user, car, startDate, endDate);
+
+        carServiceImpl.rent(agreement, driverLicense);
+
+        getList(req, resp);
 
     }
 

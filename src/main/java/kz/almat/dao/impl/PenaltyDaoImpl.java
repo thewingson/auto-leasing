@@ -1,8 +1,8 @@
 package kz.almat.dao.impl;
 
 import kz.almat.dao.PenaltyDao;
+import kz.almat.model.Agreement;
 import kz.almat.model.Penalty;
-import kz.almat.model.User;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -17,20 +17,25 @@ public class PenaltyDaoImpl implements PenaltyDao {
     private static final Logger log = Logger.getLogger(PenaltyDaoImpl.class);
 
     // insert
-    private static final String INSERT = "insert into penalty(debtor_id, fee_amount, description) " +
+    private static final String INSERT = "insert into penalty(agreement_id fee_amount, description) " +
             " values(?, ?, ?)";
 
     // where
     private static final String WHERE = " where ";
 
     //equals
-    private static final String ID_EQUALS = " id = ? ";
-    private static final String DEBTOR_ID_EQUALS = " debtor_id = ? ";
+    private static final String ID_EQUALS = " p.id = ? ";
+    private static final String USER_ID_EQUALS = " a.user_id = ? ";
 
     // selects
-    private static final String SELECT_ALL = " select * from penalty ";
+    private static final String SELECT_ALL = " select p.id, p.fee_amount, p.description, p.agreement_id from penalty p ";
+    private static final String JOIN_AGREEMENT = " join agreement a on a.id = p.agreement_id ";
     private static final String SELECT_BY_ID = SELECT_ALL + WHERE + ID_EQUALS;
-    private static final String SELECT_BY_DEBTOR = SELECT_ALL + WHERE + DEBTOR_ID_EQUALS;
+    private static final String SELECT_BY_USER_ID = SELECT_ALL + JOIN_AGREEMENT + WHERE + USER_ID_EQUALS;
+
+    // delete
+    private static final String DELETE = " delete from penalty p ";
+    private static final String DELETE_BY_ID = DELETE + WHERE + ID_EQUALS;
 
 
     @Override
@@ -40,13 +45,27 @@ public class PenaltyDaoImpl implements PenaltyDao {
 
     @Override
     public Penalty getById(Connection connection, Long id) {
-        return null;
+        Penalty penalty = null;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)) {
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeQuery();
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    penalty = build(rs);
+                }
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+        }
+
+        return penalty;
     }
 
     @Override
     public boolean create(Connection connection, Penalty penalty) {
         try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
-            statement.setLong(1, penalty.getDebtor().getId());
+            statement.setLong(1, penalty.getAgreement().getId());
             statement.setDouble(2, penalty.getFeeAmount());
             statement.setString(3, penalty.getDescription());
 
@@ -65,15 +84,23 @@ public class PenaltyDaoImpl implements PenaltyDao {
 
     @Override
     public boolean delete(Connection connection, Long id) {
-        return false;
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID)) {
+            statement.setLong(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            return false;
+        }
+
+        return true;
     }
 
     @Override
-    public List<Penalty> getByDebtor(Connection connection, Long userId) {
+    public List<Penalty> getByDebtor(Connection connection, Long debtorId) {
         List<Penalty> penalties = new ArrayList<>();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_DEBTOR)) {
-            preparedStatement.setLong(1, userId);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_USER_ID)) {
+            preparedStatement.setLong(1, debtorId);
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 while (rs.next()) {
                     penalties.add(build(rs));
@@ -89,13 +116,13 @@ public class PenaltyDaoImpl implements PenaltyDao {
 
     private Penalty build(ResultSet rs) {
         Long id = null;
-        Long debtorId = null;
+        Long agreementId = null;
         Double feeAmount = null;
         String description = null;
 
         try {
             id = rs.getLong("id");
-            debtorId = rs.getLong("debtor_id");
+            agreementId = rs.getLong("agreement_id");
             feeAmount = rs.getDouble("fee_amount");
             description = rs.getString("description");
 
@@ -104,9 +131,9 @@ public class PenaltyDaoImpl implements PenaltyDao {
             return null;
         }
 
-        User debtor = new User();
-        debtor.setId(debtorId);
+        Agreement agreement = new Agreement();
+        agreement.setId(agreementId);
 
-        return new Penalty(id, debtor, feeAmount, description);
+        return new Penalty(id, agreement, feeAmount, description);
     }
 }

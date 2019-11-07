@@ -10,6 +10,9 @@ public class Agreement {
     private Timestamp startDate;
     private Timestamp endDate;
 
+    public Agreement() {
+    }
+
     public Agreement(Long id, User rentor, Car car, Timestamp startDate, Timestamp endDate) {
         this.id = id;
         this.rentor = rentor;

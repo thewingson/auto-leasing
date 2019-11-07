@@ -6,5 +6,5 @@ import java.sql.Connection;
 import java.util.List;
 
 public interface PenaltyDao extends CommonDao<Penalty> {
-    List<Penalty> getByDebtor(Connection connection, Long userId);
+    List<Penalty> getByDebtor(Connection connection, Long debtorId);
 }

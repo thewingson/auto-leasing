@@ -168,8 +168,8 @@ public class CarServiceImpl implements CarService {
             Car car = carDaoImpl.getById(connection, carId);
             car.setCarState(CarState.REPAIR);
 
-            User debtor = agreementDaoImpl.getByCar(connection, car.getId()).getRentor();
-            penalty.setDebtor(debtor);
+            Agreement agreement = agreementDaoImpl.getByCar(connection, car.getId());
+            penalty.setAgreement(agreement);
 
             if (penaltyDaoImpl.create(connection, penalty) &&
                     carDaoImpl.update(connection, carId, car)) {

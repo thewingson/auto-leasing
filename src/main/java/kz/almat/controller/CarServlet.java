@@ -102,6 +102,9 @@ public class CarServlet extends HttpServlet {
             case "myPenalties":
                 myPenalties(req, resp);
                 break;
+            case "payPenaltyDo":
+                payPenaltyDo(req, resp);
+                break;
             default:
                 getList(req, resp);
                 break;
@@ -304,6 +307,19 @@ public class CarServlet extends HttpServlet {
         req.setAttribute("penalties", penalties);
         RequestDispatcher dispatcher = req.getRequestDispatcher("penalty/penalties.jsp");
         dispatcher.forward(req, resp);
+
+    }
+
+    private void payPenaltyDo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        session = req.getSession();
+
+        Long penaltyId = Long.parseLong(req.getParameter("id"));
+        Long userId = (Long) session.getAttribute(CommonViewParameters.ID);
+
+        penaltyServiceImpl.pay(penaltyId, userId);
+
+        returnRequests(req, resp);
 
     }
 

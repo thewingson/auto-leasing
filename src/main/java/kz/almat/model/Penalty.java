@@ -3,16 +3,16 @@ package kz.almat.model;
 public class Penalty {
 
     private Long id;
-    private User debtor;
+    private Agreement agreement;
     private Double feeAmount;
     private String description;
 
     public Penalty() {
     }
 
-    public Penalty(Long id, User debtor, Double feeAmount, String description) {
+    public Penalty(Long id, Agreement agreement, Double feeAmount, String description) {
         this.id = id;
-        this.debtor = debtor;
+        this.agreement = agreement;
         this.feeAmount = feeAmount;
         this.description = description;
     }
@@ -25,12 +25,12 @@ public class Penalty {
         this.id = id;
     }
 
-    public User getDebtor() {
-        return debtor;
+    public Agreement getAgreement() {
+        return agreement;
     }
 
-    public void setDebtor(User debtor) {
-        this.debtor = debtor;
+    public void setAgreement(Agreement agreement) {
+        this.agreement = agreement;
     }
 
     public Double getFeeAmount() {

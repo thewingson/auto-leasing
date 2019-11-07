@@ -48,7 +48,7 @@
             <td>${penalty.feeAmount}</td>
             <td>${penalty.description}</td>
             <td>
-                    <a class="button" href="?method=rent&id=${penalty.id}">Pay</a>
+                    <a class="button" href="?method=payPenaltyDo&id=${penalty.id}">Pay</a>
             </td>
         </tr>
     </c:forEach>
